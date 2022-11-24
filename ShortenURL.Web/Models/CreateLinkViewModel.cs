@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
-using BusinessLayer.Models;
+using DataAccessLayer.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ShortenURL.Models

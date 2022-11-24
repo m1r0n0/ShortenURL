@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using ShortenURL.Models;
-using BusinessLayer.Models;
+using DataAccessLayer.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace ShortenURL.Controllers

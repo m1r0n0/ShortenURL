@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using BusinessLayer.Models;
+using DataAccessLayer.Models;
 
 namespace ShortenURL.Models
 {

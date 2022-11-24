@@ -1,11 +1,11 @@
 using Microsoft.Extensions.Configuration;
-using BusinessLayer.Models;
+using DataAccessLayer.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using BusinessLayer.Data;
+using DataAccessLayer.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

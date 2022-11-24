@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using BusinessLayer.Models;
+using DataAccessLayer.Models;
 
-namespace BusinessLayer.Data
+namespace DataAccessLayer.Data
 {
     public class ApplicationContext : IdentityDbContext<User>
     {
@@ -11,6 +11,6 @@ namespace BusinessLayer.Data
         {
             Database.EnsureCreated();
         }
-        public DbSet<BusinessLayer.Models.Url> Url{ get; set; } = default!;
+        public DbSet<DataAccessLayer.Models.Url> Url{ get; set; } = default!;
     }
 }

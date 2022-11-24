@@ -1,4 +1,4 @@
-﻿namespace BusinessLayer.Models
+﻿namespace DataAccessLayer.Models
 {
     public class Url
     {

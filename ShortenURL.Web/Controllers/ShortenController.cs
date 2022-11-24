@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BusinessLayer.Models;
+using DataAccessLayer.Models;
 using ShortenURL.Models;
 using System.Diagnostics;
 using ShortenURL.Web.Models;
@@ -14,12 +14,12 @@ namespace ShortenURL.Controllers
         Random Rand = new Random();
         bool isThereSimilar = true;
         int key;
-        private readonly BusinessLayer.Data.ApplicationContext _context;
+        private readonly DataAccessLayer.Data.ApplicationContext _context;
 
         [BindProperty]
         public Url UrlObj { get; set; }
 
-        public ShortenController(BusinessLayer.Data.ApplicationContext context)
+        public ShortenController(DataAccessLayer.Data.ApplicationContext context)
         {
             _context = context;
         }
