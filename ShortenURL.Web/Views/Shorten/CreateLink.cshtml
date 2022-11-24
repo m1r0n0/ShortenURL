@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model ShortenURL.Models.CreateLinkViewModel
+
+<h1>Create your Short URL!</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div>
+                <label asp-for="FullUrl" class="control-label"></label>
+                <input asp-for="FullUrl" class="form-control" />
+                <span asp-validation-for="FullUrl" class="text-danger"></span>
+                @if (User.Identity.IsAuthenticated)
+                {
+                <div>
+                    <label asp-for="IsPrivate"></label> <br />
+                    <input asp-for="IsPrivate" />
+                </div>
+                }
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+            <br />
+            <div>
+                <h3> Your shortened Url: @Model?.ShortUrl</h3>
+             <br />
+            </div>
+        </form>
+    </div>
+</div>

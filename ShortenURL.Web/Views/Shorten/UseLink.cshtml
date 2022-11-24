@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Use your Link!";
+}
+@model ShortenURL.Models.UseLinkViewModel
+
+<div class="row">
+    <div class="col-md-6">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div>
+                <h1>Use your shortened URL!</h1>
+                <input asp-for="ShortUrl" class="form-control" />
+                <span asp-validation-for="ShortUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Use" class="btn btn-primary" />
+            </div>           
+            <div>
+                <h3> Your Full Url: @Model?.FullUrl</h3>
+                <br />
+            </div>
+        </form>
+    </div>
+</div>

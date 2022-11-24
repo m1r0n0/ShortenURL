@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "My links";
+}
+@model ShortenURL.Models.MyLinksViewModel
+
+<h1>My links</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Url[0].FullUrl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Url[0].ShortUrl)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Url[0].IsPrivate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Url)
+        {
+            @if (User.Identity.Name == item.UserEmail)
+            {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FullUrl)
+                </td>   
+                <td>
+                    @Html.DisplayFor(modelItem => item.ShortUrl)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IsPrivate)
+                </td>
+            </tr>
+            }
+        }
+    </tbody>
+</table>
