@@ -9,23 +9,23 @@ namespace ShortenURL.Controllers
 {
     public class ShortenController : Controller
     {
-        string shortened = "https://shrtUrl/";
+        /*string shortened = "https://shrtUrl/";
         string userEmail = string.Empty;
         Random Rand = new Random();
         bool isThereSimilar = true;
         int key;
-        private readonly DataAccessLayer.Data.ApplicationContext _context;
+        private readonly DataAccessLayer.Data.ApplicationContext _context;*/
 
-        [BindProperty]
-        public Url UrlObj { get; set; }
+        /*[BindProperty]
+        public Url UrlObj { get; set; }*/
 
-        public ShortenController(DataAccessLayer.Data.ApplicationContext context)
+        /*public ShortenController(DataAccessLayer.Data.ApplicationContext context)
         {
             _context = context;
-        }
+        }*/
 
         [HttpGet]
-        public async Task<IActionResult> CreateLink()
+        public IActionResult CreateLink()
         {
             return View();
         }
@@ -33,53 +33,8 @@ namespace ShortenURL.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateLink(CreateLinkViewModel model)
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                userEmail = User.Identity.Name;
-            }
-
-            while (true)
-            {
-                shortened = "https://shrtUrl.com/";
-                for (int i = 0; i < 4; i++)
-                {
-                    key = Rand.Next(1, 4);
-                    switch (key)
-                    {
-                        case 1:
-                            shortened += (char)Rand.Next(48, 58);
-                            break;
-                        case 2:
-                            shortened += (char)Rand.Next(65, 91);
-                            break;
-                        case 3:
-                            shortened += (char)Rand.Next(97, 123);
-                            break;
-                    }
-                }
-
-                foreach (var item in _context.Url)
-                {
-                    if (shortened == item.ShortUrl)
-                    {
-                        isThereSimilar = true;
-                        break;
-                    }
-                    else
-                    {
-                        isThereSimilar = false;
-                    }
-                }
-
-                if (!isThereSimilar)
-                {
-                    break;
-                }
-            }
-            UrlObj = new Url { UserEmail = userEmail, FullUrl = model.FullUrl, ShortUrl = shortened, IsPrivate = model.IsPrivate };
-            _context.Url.Add(UrlObj);
-            await _context.SaveChangesAsync();
-            model.ShortUrl = shortened;
+            ShortenService.CreateLinkPost(model, User);
+            //userEmail = User.Identity.Name;
             return View(model);
         }
 
