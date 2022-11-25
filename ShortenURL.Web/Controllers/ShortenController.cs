@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DataAccessLayer.Models;
+﻿using BusinessLayer.DTOs;
+using BusinessLayer.Services;
+using Microsoft.AspNetCore.Mvc;
 using ShortenURL.Models;
 using System.Diagnostics;
-using ShortenURL.Web.Models;
 
 namespace ShortenURL.Controllers
 {
@@ -33,18 +32,25 @@ namespace ShortenURL.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateLink(CreateLinkViewModel model)
         {
-            ShortenService.CreateLinkPost(model, User);
-            //userEmail = User.Identity.Name;
+            ShortenService shortenService = new ShortenService();
+            CreateLinkVM_DTO createLinkVM_DTO = new CreateLinkVM_DTO(model.FullUrl, model.ShortUrl, model.IsPrivate);
+
+            if (User.Identity.IsAuthenticated)
+            {
+                shortenService.GiveUserID(User.Identity.Name);
+            }          
+            createLinkVM_DTO = await shortenService.CreateLinkPost(createLinkVM_DTO);
+            model = new CreateLinkViewModel (createLinkVM_DTO.FullUrl, createLinkVM_DTO.ShortUrl, createLinkVM_DTO.IsPrivate);
             return View(model);
         }
 
         [HttpGet]
         public async Task<IActionResult> MyLinks(MyLinksViewModel model)
         {
-            if (_context.Url != null)
+            /*if (_context.Url != null)
             {
                 model.Url = await _context.Url.ToListAsync();
-            }
+            }*/
             return View(model);
         }
 
@@ -57,35 +63,7 @@ namespace ShortenURL.Controllers
         [HttpPost]
         public async Task<IActionResult> UseLink(UseLinkViewModel model)
         {
-            foreach (var item in _context.Url)
-            {
-                if (item.IsPrivate)
-                {
-                    if (model.ShortUrl == item.ShortUrl)
-                    {
-                        if (item.UserEmail == User.Identity.Name) 
-                        {
-                            model.FullUrl = item.FullUrl;
-                            break;
-                        }
-                        else
-                        {
-                            model.FullUrl = "You don't have acces to this link!";
-                            break;
-                        }                       
-                    }                    
-                }
-                else
-                {
-                    if (model.ShortUrl == item.ShortUrl)
-                    {
-                        model.FullUrl = item.FullUrl;
-                        break;
-                    }
-                        
-                }
-                
-            }
+            //put alternative code from CreateLink
             return View(model);
         }
 

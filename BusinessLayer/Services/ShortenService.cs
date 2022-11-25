@@ -1,13 +1,11 @@
-﻿using DataAccessLayer.Models;
-using Microsoft.AspNetCore.Http;
-using ShortenURL.Models;
-
+﻿using BusinessLayer.DTOs;
+using DataAccessLayer.Models;
 namespace BusinessLayer.Services
 {
-    internal class ShortenService
+    public class ShortenService
     {
         string shortened = "https://shrtUrl/";
-        string userEmail = string.Empty;
+        string userId = string.Empty;
         bool isThereSimilar = true;
         int key;
         private readonly DataAccessLayer.Data.ApplicationContext _context;
@@ -15,17 +13,13 @@ namespace BusinessLayer.Services
         Random Rand = new Random();
         public Url UrlObj { get; set; }
 
-        public ShortenService(DataAccessLayer.Data.ApplicationContext context)
+        /*public ShortenService(DataAccessLayer.Data.ApplicationContext context)
         {
             _context = context;
-        }
+        }*/
 
-        public async Task<CreateLinkViewModel> CreateLinkPost(CreateLinkViewModel model, System.Security.Principal.IPrincipal user)
+        public async Task<CreateLinkVM_DTO> CreateLinkPost(CreateLinkVM_DTO model)
         {
-            if (user.Identity.IsAuthenticated)
-            {
-                userEmail = user.Identity.Name;
-            }
 
             while (true)
             {
@@ -65,11 +59,58 @@ namespace BusinessLayer.Services
                     break;
                 }
             }
-            UrlObj = new Url { UserEmail = userEmail, FullUrl = model.FullUrl, ShortUrl = shortened, IsPrivate = model.IsPrivate };
+            UrlObj = new Url { UserId = userId, FullUrl = model.FullUrl, ShortUrl = shortened, IsPrivate = model.IsPrivate };
             _context.Url.Add(UrlObj);
             await _context.SaveChangesAsync();
             model.ShortUrl = shortened;
             return model;
         }
+
+        public void GiveUserID(string _name)
+        {
+            foreach (var item in _context.User)
+            {
+                if (_name == item.UserName)
+                {
+                    userId = item.Id;
+                }
+            }
+        }
+
+        public async Task<CreateLinkVM_DTO> UseLinkPost(CreateLinkVM_DTO model)
+        {
+            foreach (var item in _context.Url)
+            {
+                if (item.IsPrivate)
+                {
+                    if (model.ShortUrl == item.ShortUrl)
+                    {
+                        if (item.UserId == userId)
+                        {
+                            model.FullUrl = item.FullUrl;
+                            break;
+                        }
+                        else
+                        {
+                            model.FullUrl = "You don't have acces to this link!";
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    if (model.ShortUrl == item.ShortUrl)
+                    {
+                        model.FullUrl = item.FullUrl;
+                        break;
+                    }
+
+                }
+
+            }
+            return model;
+        }
+
+
     }
 }
