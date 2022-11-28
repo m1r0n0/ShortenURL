@@ -1,13 +1,15 @@
 ﻿using BusinessLayer.DTOs;
 using DataAccessLayer.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace BusinessLayer.Services
 {
     public class ShortenService
     {
         string shortened = "https://shrtUrl/";
-        string userId = string.Empty;
-        bool isThereSimilar = true;
-        int key;
+        private string userId = string.Empty;
+        private bool isThereSimilar = true;
+        private int key;
         private readonly DataAccessLayer.Data.ApplicationContext _context;
 
         Random Rand = new Random();
@@ -17,8 +19,18 @@ namespace BusinessLayer.Services
         {
             _context = context;
         }*/
+        public void GiveUserID(string _name)
+        {
+            foreach (var item in _context.UserList)
+            {
+                if (_name == item.UserName)
+                {
+                    userId = item.Id;
+                }
+            }
+        }
 
-        public async Task<CreateLinkVM_DTO> CreateLinkPost(CreateLinkVM_DTO model)
+        public async Task<LinkViewModel_DTO> CreateLinkPost(LinkViewModel_DTO model_DTO)
         {
 
             while (true)
@@ -41,7 +53,7 @@ namespace BusinessLayer.Services
                     }
                 }
 
-                foreach (var item in _context.Url)
+                foreach (var item in _context.UrlList)
                 {
                     if (shortened == item.ShortUrl)
                     {
@@ -59,56 +71,54 @@ namespace BusinessLayer.Services
                     break;
                 }
             }
-            UrlObj = new Url { UserId = userId, FullUrl = model.FullUrl, ShortUrl = shortened, IsPrivate = model.IsPrivate };
-            _context.Url.Add(UrlObj);
+            UrlObj = new Url { UserId = userId, FullUrl = model_DTO.FullUrl, ShortUrl = shortened, IsPrivate = model_DTO.IsPrivate };
+            _context.UrlList.Add(UrlObj);
             await _context.SaveChangesAsync();
-            model.ShortUrl = shortened;
-            return model;
+            model_DTO.ShortUrl = shortened;
+            return model_DTO;
         }
 
-        public void GiveUserID(string _name)
+        public async Task<LinkViewModel_DTO> MyLinksGet(LinkViewModel_DTO model_DTO)
         {
-            foreach (var item in _context.User)
+            if (_context.UrlList != null)
             {
-                if (_name == item.UserName)
-                {
-                    userId = item.Id;
-                }
+                model_DTO.UrlList = await _context.UrlList.ToListAsync();
             }
+            return model_DTO;
         }
 
-        public async Task<CreateLinkVM_DTO> UseLinkPost(CreateLinkVM_DTO model)
+        public LinkViewModel_DTO UseLinkPost(LinkViewModel_DTO model_DTO)
         {
-            foreach (var item in _context.Url)
+            foreach (var item in _context.UrlList)
             {
                 if (item.IsPrivate)
                 {
-                    if (model.ShortUrl == item.ShortUrl)
+                    if (model_DTO.ShortUrl == item.ShortUrl)
                     {
                         if (item.UserId == userId)
                         {
-                            model.FullUrl = item.FullUrl;
+                            model_DTO.FullUrl = item.FullUrl;
                             break;
                         }
                         else
                         {
-                            model.FullUrl = "You don't have acces to this link!";
+                            model_DTO.FullUrl = "You don't have acces to this link!";
                             break;
                         }
                     }
                 }
                 else
                 {
-                    if (model.ShortUrl == item.ShortUrl)
+                    if (model_DTO.ShortUrl == item.ShortUrl)
                     {
-                        model.FullUrl = item.FullUrl;
+                        model_DTO.FullUrl = item.FullUrl;
                         break;
                     }
 
                 }
 
             }
-            return model;
+            return model_DTO;
         }
 
 

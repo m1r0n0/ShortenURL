@@ -7,7 +7,7 @@ namespace ShortenURL.Models
 {
     public class CreateLinkViewModel
     {
-        public IList<Url> Url { get; set; } = default!;
+        public IList<Url> UrlList { get; set; } = default!;
 
         [Required]
         [Display(Name = "Your full URL")]

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ShortenURL.Web.Models;
+using ShortenURL.Models;
 using System.Diagnostics;
 
 namespace ShortenURL.Web.Controllers

@@ -5,6 +5,11 @@ namespace ShortenURL.Models
 {
     public class MyLinksViewModel
     {
-        public IList<Url> Url { get; set; } = default!;
+        public IList<Url> UrlList { get; set; } = default!;
+
+        public MyLinksViewModel(IList<Url> _urlList)
+            {
+            _urlList = UrlList;
+            }
     }
 }

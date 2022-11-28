@@ -11,7 +11,7 @@ namespace DataAccessLayer.Data
         {
             Database.EnsureCreated();
         }
-        public DbSet<DataAccessLayer.Models.Url> Url{ get; set; } = default!;
-        public DbSet<DataAccessLayer.Models.User> User{ get; set; } = default!;
+        public DbSet<DataAccessLayer.Models.Url> UrlList { get; set; } = default!;
+        public DbSet<DataAccessLayer.Models.User> UserList{ get; set; } = default!;
     }
 }

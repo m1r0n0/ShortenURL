@@ -23,6 +23,16 @@ namespace ShortenURL.Controllers
             _context = context;
         }*/
 
+        ShortenService shortenService = new ShortenService();
+
+        private void IsAuthenticated()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                shortenService.GiveUserID(User.Identity.Name);
+            }
+        }
+
         [HttpGet]
         public IActionResult CreateLink()
         {
@@ -32,38 +42,35 @@ namespace ShortenURL.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateLink(CreateLinkViewModel model)
         {
-            ShortenService shortenService = new ShortenService();
-            CreateLinkVM_DTO createLinkVM_DTO = new CreateLinkVM_DTO(model.FullUrl, model.ShortUrl, model.IsPrivate);
-
-            if (User.Identity.IsAuthenticated)
-            {
-                shortenService.GiveUserID(User.Identity.Name);
-            }          
-            createLinkVM_DTO = await shortenService.CreateLinkPost(createLinkVM_DTO);
-            model = new CreateLinkViewModel (createLinkVM_DTO.FullUrl, createLinkVM_DTO.ShortUrl, createLinkVM_DTO.IsPrivate);
+            LinkViewModel_DTO linkViewModel_DTO = new LinkViewModel_DTO(model.FullUrl, model.ShortUrl, model.IsPrivate);
+            IsAuthenticated();
+            linkViewModel_DTO = await shortenService.CreateLinkPost(linkViewModel_DTO);
+            model = new CreateLinkViewModel (linkViewModel_DTO.FullUrl, linkViewModel_DTO.ShortUrl, linkViewModel_DTO.IsPrivate);
             return View(model);
         }
 
         [HttpGet]
         public async Task<IActionResult> MyLinks(MyLinksViewModel model)
         {
-            /*if (_context.Url != null)
-            {
-                model.Url = await _context.Url.ToListAsync();
-            }*/
+            LinkViewModel_DTO linkViewModel_DTO = new LinkViewModel_DTO(model.UrlList);
+            linkViewModel_DTO = await shortenService.MyLinksGet(linkViewModel_DTO);
+            model = new MyLinksViewModel(linkViewModel_DTO.UrlList);
             return View(model);
         }
 
         [HttpGet]
-        public async Task<IActionResult> UseLink()
+        public IActionResult UseLink()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> UseLink(UseLinkViewModel model)
+        public IActionResult UseLink(UseLinkViewModel model)
         {
-            //put alternative code from CreateLink
+            LinkViewModel_DTO linkViewModel_DTO = new LinkViewModel_DTO(model.FullUrl, model.ShortUrl, model.IsPrivate);
+            IsAuthenticated();
+            linkViewModel_DTO = shortenService.UseLinkPost(linkViewModel_DTO);
+            model = new UseLinkViewModel(linkViewModel_DTO.FullUrl, linkViewModel_DTO.ShortUrl, linkViewModel_DTO.IsPrivate);
             return View(model);
         }
 
