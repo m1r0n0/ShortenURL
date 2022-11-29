@@ -12,6 +12,7 @@ using BusinessLayer.DTOs;
 using ShortenURL.Models;
 using BusinessLayer.Services;
 using ShortenURL.Controllers;
+using BusinessLayer.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +23,7 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationContext>();
 builder.Services.AddAutoMapper(typeof(AppMappingProfileForCreateLinkVM), typeof(AppMappingProfileForUseLinkVM), typeof(AppMappingProfileForMyLinksVM));
-builder.Services.AddScoped<ShortenService>();
+builder.Services.AddScoped<IShortenService,ShortenService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

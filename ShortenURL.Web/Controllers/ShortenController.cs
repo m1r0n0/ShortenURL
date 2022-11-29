@@ -4,15 +4,16 @@ using BusinessLayer.Services;
 using Microsoft.AspNetCore.Mvc;
 using ShortenURL.Models;
 using System.Diagnostics;
+using BusinessLayer.Interfaces;
 
 namespace ShortenURL.Controllers
 {
     public class ShortenController : Controller
     {
-        private readonly ShortenService _shortenService;
+        private readonly IShortenService _shortenService;
         private readonly IMapper _mapper;
 
-        public ShortenController(ShortenService shortenService, IMapper mapper)
+        public ShortenController(IShortenService shortenService, IMapper mapper)
         {
             _shortenService = shortenService;
             _mapper = mapper;
@@ -49,7 +50,7 @@ namespace ShortenURL.Controllers
             linkViewModelDTO = await _shortenService.MyLinksGet(linkViewModelDTO);
             model = _mapper.Map<MyLinksViewModel>(linkViewModelDTO);
             IsAuthenticated();
-            model.UserId = _shortenService.GetUserId();
+            model.UserId = _shortenService.GetUserID();
             return View(model);
         }
 

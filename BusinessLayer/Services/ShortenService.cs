@@ -1,11 +1,12 @@
 ﻿using BusinessLayer.DTOs;
+using BusinessLayer.Interfaces;
 using DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace BusinessLayer.Services
 {
-    public class ShortenService
+    public class ShortenService : IShortenService
     {
         private readonly IConfiguration _configuration;
         private readonly DataAccessLayer.Data.ApplicationContext _context;
@@ -35,7 +36,7 @@ namespace BusinessLayer.Services
             }
         }
 
-        public string GetUserId()
+        public string GetUserID()
         {
             return _userId;
         }
