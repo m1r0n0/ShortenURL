@@ -26,5 +26,9 @@ namespace ShortenURL.Models
             ShortUrl = _shortUrl;
             IsPrivate = _isPrivate;
         }
+
+        public UseLinkViewModel()
+        {
+        }
     }
 }

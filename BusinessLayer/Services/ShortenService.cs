@@ -1,84 +1,97 @@
 ﻿using BusinessLayer.DTOs;
 using DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace BusinessLayer.Services
 {
     public class ShortenService
     {
-        string shortened = "https://shrtUrl/";
-        private string userId = string.Empty;
-        private bool isThereSimilar = true;
-        private int key;
+        private readonly IConfiguration _configuration;
         private readonly DataAccessLayer.Data.ApplicationContext _context;
+
+        private string _shortened = string.Empty;
+        private string _userId = string.Empty;
+        private bool _isThereSimilar = false;
+        private int _key;
 
         Random Rand = new Random();
         public Url UrlObj { get; set; }
 
-        /*public ShortenService(DataAccessLayer.Data.ApplicationContext context)
+        public ShortenService(DataAccessLayer.Data.ApplicationContext context, IConfiguration configuration)
         {
             _context = context;
-        }*/
+            _configuration = configuration;
+        }
+
+
         public void GiveUserID(string _name)
         {
             foreach (var item in _context.UserList)
             {
                 if (_name == item.UserName)
                 {
-                    userId = item.Id;
+                    _userId = item.Id;
                 }
             }
         }
 
-        public async Task<LinkViewModel_DTO> CreateLinkPost(LinkViewModel_DTO model_DTO)
+        public string GetUserId()
         {
+            return _userId;
+        }
+
+        public async Task<LinkViewModelDTO> CreateLinkPost(LinkViewModelDTO modelDTO)
+        {
+
 
             while (true)
             {
-                shortened = "https://shrtUrl.com/";
+                _shortened = _configuration["shortenedBegining"];
                 for (int i = 0; i < 4; i++)
                 {
-                    key = Rand.Next(1, 4);
-                    switch (key)
+                    _key = Rand.Next(1, 4);
+                    switch (_key)
                     {
                         case 1:
-                            shortened += (char)Rand.Next(48, 58);
+                            _shortened += (char)Rand.Next(48, 58);
                             break;
                         case 2:
-                            shortened += (char)Rand.Next(65, 91);
+                            _shortened += (char)Rand.Next(65, 91);
                             break;
                         case 3:
-                            shortened += (char)Rand.Next(97, 123);
+                            _shortened += (char)Rand.Next(97, 123);
                             break;
                     }
                 }
 
                 foreach (var item in _context.UrlList)
                 {
-                    if (shortened == item.ShortUrl)
+                    if (_shortened == item.ShortUrl)
                     {
-                        isThereSimilar = true;
+                        _isThereSimilar = true;
                         break;
                     }
                     else
                     {
-                        isThereSimilar = false;
+                        _isThereSimilar = false;
                     }
                 }
 
-                if (!isThereSimilar)
+                if (!_isThereSimilar)
                 {
                     break;
                 }
             }
-            UrlObj = new Url { UserId = userId, FullUrl = model_DTO.FullUrl, ShortUrl = shortened, IsPrivate = model_DTO.IsPrivate };
+
+            UrlObj = new Url { UserId = _userId, FullUrl = modelDTO.FullUrl, ShortUrl = _shortened, IsPrivate = modelDTO.IsPrivate };
             _context.UrlList.Add(UrlObj);
             await _context.SaveChangesAsync();
-            model_DTO.ShortUrl = shortened;
-            return model_DTO;
+            modelDTO.ShortUrl = _shortened;
+            return modelDTO;
         }
 
-        public async Task<LinkViewModel_DTO> MyLinksGet(LinkViewModel_DTO model_DTO)
+        public async Task<LinkViewModelDTO> MyLinksGet(LinkViewModelDTO model_DTO)
         {
             if (_context.UrlList != null)
             {
@@ -87,7 +100,7 @@ namespace BusinessLayer.Services
             return model_DTO;
         }
 
-        public LinkViewModel_DTO UseLinkPost(LinkViewModel_DTO model_DTO)
+        public LinkViewModelDTO UseLinkPost(LinkViewModelDTO model_DTO)
         {
             foreach (var item in _context.UrlList)
             {
@@ -95,7 +108,7 @@ namespace BusinessLayer.Services
                 {
                     if (model_DTO.ShortUrl == item.ShortUrl)
                     {
-                        if (item.UserId == userId)
+                        if (item.UserId == _userId)
                         {
                             model_DTO.FullUrl = item.FullUrl;
                             break;

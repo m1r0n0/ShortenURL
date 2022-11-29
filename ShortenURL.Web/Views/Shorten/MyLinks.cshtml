@@ -23,7 +23,7 @@
     <tbody>
         @foreach (var item in Model.UrlList)
         {
-            @if (User.Identity.Name == item.UserEmail)
+            @if (Model.UserId == item.UserId)
             {
             <tr>
                 <td>

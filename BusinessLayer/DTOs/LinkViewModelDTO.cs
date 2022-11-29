@@ -7,20 +7,21 @@ using DataAccessLayer.Models;
 
 namespace BusinessLayer.DTOs
 {
-    public class LinkViewModel_DTO
+    public class LinkViewModelDTO
     {
+		public string UserId { get; set; } = string.Empty;
 		public string FullUrl { get; set; } = string.Empty;
 		public string ShortUrl { get; set; } = string.Empty;
 		public bool IsPrivate { get; set; }
 		public IList<Url> UrlList { get; set; } = default!;
 
-        public LinkViewModel_DTO(string _fullUrl, string _shortUrl, bool _isPrivate)
+        public LinkViewModelDTO(string _fullUrl, string _shortUrl, bool _isPrivate)
 		{
 			FullUrl = _fullUrl;
 			ShortUrl = _shortUrl;
 			IsPrivate = _isPrivate;
 		}
-        public LinkViewModel_DTO(IList<Url> _urlList)
+        public LinkViewModelDTO(IList<Url> _urlList)
         {
 			_urlList = UrlList;
         }
