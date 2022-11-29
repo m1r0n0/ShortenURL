@@ -9,21 +9,21 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Url[0].FullUrl)
+                @Html.DisplayNameFor(model => model.UrlList[0].FullUrl)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Url[0].ShortUrl)
+                @Html.DisplayNameFor(model => model.UrlList[0].ShortUrl)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Url[0].IsPrivate)
+                @Html.DisplayNameFor(model => model.UrlList[0].IsPrivate)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Url)
+        @foreach (var item in Model.UrlList)
         {
-            @if (User.Identity.Name == item.UserEmail)
+            @if (Model.UserId == item.UserId)
             {
             <tr>
                 <td>

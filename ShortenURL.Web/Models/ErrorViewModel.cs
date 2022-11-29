@@ -1,4 +1,4 @@
-namespace ShortenURL.Web.Models
+namespace ShortenURL.Models
 {
     public class ErrorViewModel
     {

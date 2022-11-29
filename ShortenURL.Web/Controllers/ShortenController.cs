@@ -1,31 +1,45 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using DataAccessLayer.Models;
+﻿using AutoMapper;
+using BusinessLayer.DTOs;
+using BusinessLayer.Services;
+using Microsoft.AspNetCore.Mvc;
 using ShortenURL.Models;
 using System.Diagnostics;
-using ShortenURL.Web.Models;
+using DataAccessLayer.Data;
 
 namespace ShortenURL.Controllers
 {
     public class ShortenController : Controller
     {
-        string shortened = "https://shrtUrl/";
+        /*string shortened = "https://shrtUrl/";
         string userEmail = string.Empty;
         Random Rand = new Random();
         bool isThereSimilar = true;
         int key;
-        private readonly DataAccessLayer.Data.ApplicationContext _context;
+        private readonly DataAccessLayer.Data.ApplicationContext _context;*/
 
-        [BindProperty]
-        public Url UrlObj { get; set; }
+        /*[BindProperty]
+        public Url UrlObj { get; set; }*/
 
-        public ShortenController(DataAccessLayer.Data.ApplicationContext context)
+        private readonly ShortenService _shortenService;
+        private readonly IMapper _mapper;
+        //private readonly DataAccessLayer.Data.ApplicationContext _context;
+
+        public ShortenController(ShortenService shortenService, IMapper mapper)
         {
-            _context = context;
+            _shortenService = shortenService;
+            _mapper = mapper;
+        }
+
+        private void IsAuthenticated()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                _shortenService.GiveUserID(User.Identity.Name);
+            }
         }
 
         [HttpGet]
-        public async Task<IActionResult> CreateLink()
+        public IActionResult CreateLink()
         {
             return View();
         }
@@ -33,104 +47,40 @@ namespace ShortenURL.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateLink(CreateLinkViewModel model)
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                userEmail = User.Identity.Name;
-            }
-
-            while (true)
-            {
-                shortened = "https://shrtUrl.com/";
-                for (int i = 0; i < 4; i++)
-                {
-                    key = Rand.Next(1, 4);
-                    switch (key)
-                    {
-                        case 1:
-                            shortened += (char)Rand.Next(48, 58);
-                            break;
-                        case 2:
-                            shortened += (char)Rand.Next(65, 91);
-                            break;
-                        case 3:
-                            shortened += (char)Rand.Next(97, 123);
-                            break;
-                    }
-                }
-
-                foreach (var item in _context.Url)
-                {
-                    if (shortened == item.ShortUrl)
-                    {
-                        isThereSimilar = true;
-                        break;
-                    }
-                    else
-                    {
-                        isThereSimilar = false;
-                    }
-                }
-
-                if (!isThereSimilar)
-                {
-                    break;
-                }
-            }
-            UrlObj = new Url { UserEmail = userEmail, FullUrl = model.FullUrl, ShortUrl = shortened, IsPrivate = model.IsPrivate };
-            _context.Url.Add(UrlObj);
-            await _context.SaveChangesAsync();
-            model.ShortUrl = shortened;
+            LinkViewModelDTO linkViewModelDTO = new LinkViewModelDTO(model.FullUrl, model.ShortUrl, model.IsPrivate);
+            IsAuthenticated();
+            linkViewModelDTO = await _shortenService.CreateLinkPost(linkViewModelDTO);
+            model = _mapper.Map<CreateLinkViewModel>(linkViewModelDTO);
+            //model = new CreateLinkViewModel (linkViewModel_DTO.FullUrl, linkViewModel_DTO.ShortUrl, linkViewModel_DTO.IsPrivate);
             return View(model);
         }
 
         [HttpGet]
         public async Task<IActionResult> MyLinks(MyLinksViewModel model)
         {
-            if (_context.Url != null)
-            {
-                model.Url = await _context.Url.ToListAsync();
-            }
+            LinkViewModelDTO linkViewModelDTO = new LinkViewModelDTO(model.UrlList);
+            linkViewModelDTO = await _shortenService.MyLinksGet(linkViewModelDTO);
+            model = _mapper.Map<MyLinksViewModel>(linkViewModelDTO);
+            //model = new MyLinksViewModel(linkViewModel_DTO.UrlList);
+            IsAuthenticated();
+            model.UserId = _shortenService.GetUserId();
             return View(model);
         }
 
         [HttpGet]
-        public async Task<IActionResult> UseLink()
+        public IActionResult UseLink()
         {
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> UseLink(UseLinkViewModel model)
+        public IActionResult UseLink(UseLinkViewModel model)
         {
-            foreach (var item in _context.Url)
-            {
-                if (item.IsPrivate)
-                {
-                    if (model.ShortUrl == item.ShortUrl)
-                    {
-                        if (item.UserEmail == User.Identity.Name) 
-                        {
-                            model.FullUrl = item.FullUrl;
-                            break;
-                        }
-                        else
-                        {
-                            model.FullUrl = "You don't have acces to this link!";
-                            break;
-                        }                       
-                    }                    
-                }
-                else
-                {
-                    if (model.ShortUrl == item.ShortUrl)
-                    {
-                        model.FullUrl = item.FullUrl;
-                        break;
-                    }
-                        
-                }
-                
-            }
+            LinkViewModelDTO linkViewModelDTO = new LinkViewModelDTO(model.FullUrl, model.ShortUrl, model.IsPrivate);
+            IsAuthenticated();
+            linkViewModelDTO = _shortenService.UseLinkPost(linkViewModelDTO);
+            model = _mapper.Map<UseLinkViewModel>(linkViewModelDTO);
+            //model = new UseLinkViewModel(linkViewModel_DTO.FullUrl, linkViewModel_DTO.ShortUrl, linkViewModel_DTO.IsPrivate);
             return View(model);
         }
 

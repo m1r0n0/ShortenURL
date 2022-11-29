@@ -6,6 +6,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using DataAccessLayer.Data;
+using AutoMapper;
+using System;
+using BusinessLayer.DTOs;
+using ShortenURL.Models;
+using BusinessLayer.Services;
+using ShortenURL.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +21,8 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationContext>();
+builder.Services.AddAutoMapper(typeof(AppMappingProfileForCreateLinkVM), typeof(AppMappingProfileForUseLinkVM), typeof(AppMappingProfileForMyLinksVM));
+builder.Services.AddScoped<ShortenService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -44,3 +52,25 @@ app.UseEndpoints(endpoints =>
 });
 
 app.Run();
+
+public class AppMappingProfileForCreateLinkVM : Profile
+{
+    public AppMappingProfileForCreateLinkVM()
+    {
+        CreateMap<LinkViewModelDTO, CreateLinkViewModel>();
+    }
+}
+public class AppMappingProfileForUseLinkVM : Profile
+{
+    public AppMappingProfileForUseLinkVM()
+    {
+        CreateMap<LinkViewModelDTO, UseLinkViewModel>();
+    }
+}
+public class AppMappingProfileForMyLinksVM : Profile
+{
+    public AppMappingProfileForMyLinksVM()
+    {
+        CreateMap<LinkViewModelDTO, MyLinksViewModel>();
+    }
+}

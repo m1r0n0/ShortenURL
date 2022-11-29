@@ -7,7 +7,7 @@ namespace ShortenURL.Models
 {
     public class CreateLinkViewModel
     {
-        public IList<Url> Url { get; set; } = default!;
+        public IList<Url> UrlList { get; set; } = default!;
 
         [Required]
         [Display(Name = "Your full URL")]
@@ -21,6 +21,16 @@ namespace ShortenURL.Models
         [Display(Name = "Private link?")]
         public bool IsPrivate { get; set; }
 
+        public CreateLinkViewModel()
+        {
+        }
+
+        public CreateLinkViewModel(string _fullUrl, string _shortUrl, bool _isPrivate)
+        {
+            FullUrl = _fullUrl;
+            ShortUrl = _shortUrl;
+            IsPrivate = _isPrivate;
+        }
 
     }
 }
