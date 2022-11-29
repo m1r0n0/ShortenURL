@@ -24,7 +24,6 @@ namespace BusinessLayer.Services
             _configuration = configuration;
         }
 
-
         public void GiveUserID(string _name)
         {
             foreach (var item in _context.UserList)
@@ -133,7 +132,5 @@ namespace BusinessLayer.Services
             }
             return model_DTO;
         }
-
-
     }
 }

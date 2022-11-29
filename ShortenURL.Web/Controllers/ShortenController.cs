@@ -4,25 +4,13 @@ using BusinessLayer.Services;
 using Microsoft.AspNetCore.Mvc;
 using ShortenURL.Models;
 using System.Diagnostics;
-using DataAccessLayer.Data;
 
 namespace ShortenURL.Controllers
 {
     public class ShortenController : Controller
     {
-        /*string shortened = "https://shrtUrl/";
-        string userEmail = string.Empty;
-        Random Rand = new Random();
-        bool isThereSimilar = true;
-        int key;
-        private readonly DataAccessLayer.Data.ApplicationContext _context;*/
-
-        /*[BindProperty]
-        public Url UrlObj { get; set; }*/
-
         private readonly ShortenService _shortenService;
         private readonly IMapper _mapper;
-        //private readonly DataAccessLayer.Data.ApplicationContext _context;
 
         public ShortenController(ShortenService shortenService, IMapper mapper)
         {
@@ -50,8 +38,7 @@ namespace ShortenURL.Controllers
             LinkViewModelDTO linkViewModelDTO = new LinkViewModelDTO(model.FullUrl, model.ShortUrl, model.IsPrivate);
             IsAuthenticated();
             linkViewModelDTO = await _shortenService.CreateLinkPost(linkViewModelDTO);
-            model = _mapper.Map<CreateLinkViewModel>(linkViewModelDTO);
-            //model = new CreateLinkViewModel (linkViewModel_DTO.FullUrl, linkViewModel_DTO.ShortUrl, linkViewModel_DTO.IsPrivate);
+            model = _mapper.Map<CreateLinkViewModel>(linkViewModelDTO);          
             return View(model);
         }
 
@@ -61,7 +48,6 @@ namespace ShortenURL.Controllers
             LinkViewModelDTO linkViewModelDTO = new LinkViewModelDTO(model.UrlList);
             linkViewModelDTO = await _shortenService.MyLinksGet(linkViewModelDTO);
             model = _mapper.Map<MyLinksViewModel>(linkViewModelDTO);
-            //model = new MyLinksViewModel(linkViewModel_DTO.UrlList);
             IsAuthenticated();
             model.UserId = _shortenService.GetUserId();
             return View(model);
@@ -79,8 +65,7 @@ namespace ShortenURL.Controllers
             LinkViewModelDTO linkViewModelDTO = new LinkViewModelDTO(model.FullUrl, model.ShortUrl, model.IsPrivate);
             IsAuthenticated();
             linkViewModelDTO = _shortenService.UseLinkPost(linkViewModelDTO);
-            model = _mapper.Map<UseLinkViewModel>(linkViewModelDTO);
-            //model = new UseLinkViewModel(linkViewModel_DTO.FullUrl, linkViewModel_DTO.ShortUrl, linkViewModel_DTO.IsPrivate);
+            model = _mapper.Map<UseLinkViewModel>(linkViewModelDTO);            
             return View(model);
         }
 

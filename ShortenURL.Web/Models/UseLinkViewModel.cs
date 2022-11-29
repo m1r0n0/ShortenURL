@@ -19,16 +19,5 @@ namespace ShortenURL.Models
         public bool IsPrivate { get; set; }
 
         public IList<Url> UrlList { get; set; } = default!;
-
-        public UseLinkViewModel(string _fullUrl, string _shortUrl, bool _isPrivate)
-        {
-            FullUrl = _fullUrl;
-            ShortUrl = _shortUrl;
-            IsPrivate = _isPrivate;
-        }
-
-        public UseLinkViewModel()
-        {
-        }
     }
 }

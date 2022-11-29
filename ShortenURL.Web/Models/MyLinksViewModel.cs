@@ -7,13 +7,5 @@ namespace ShortenURL.Models
     {
         public string UserId { get; set; } = string.Empty;
         public IList<Url> UrlList { get; set; } = default!;
-
-        public MyLinksViewModel(IList<Url> _urlList)
-        {
-            _urlList = UrlList;
-        }
-        public MyLinksViewModel()
-        {
-        }
     }
 }
