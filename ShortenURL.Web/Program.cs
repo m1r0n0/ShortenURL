@@ -58,20 +58,20 @@ public class AppMappingProfileForCreateLinkVM : Profile
 {
     public AppMappingProfileForCreateLinkVM()
     {
-        CreateMap<LinkViewModelDTO, CreateLinkViewModel>();
+        CreateMap<LinkViewModelDTO, CreateLinkViewModel>().ReverseMap();
     }
 }
 public class AppMappingProfileForUseLinkVM : Profile
 {
     public AppMappingProfileForUseLinkVM()
     {
-        CreateMap<LinkViewModelDTO, UseLinkViewModel>();
+        CreateMap<LinkViewModelDTO, UseLinkViewModel>().ReverseMap();
     }
 }
 public class AppMappingProfileForMyLinksVM : Profile
 {
     public AppMappingProfileForMyLinksVM()
     {
-        CreateMap<LinkViewModelDTO, MyLinksViewModel>();
+        CreateMap<LinkViewModelDTO, MyLinksViewModel>().ReverseMap();
     }
 }

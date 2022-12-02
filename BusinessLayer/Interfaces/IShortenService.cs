@@ -9,10 +9,10 @@ namespace BusinessLayer.Interfaces
 {
     public interface IShortenService
     {
-        void GiveUserID(string _name);
-        string GetUserID();
-        Task<LinkViewModelDTO> CreateLinkPost(LinkViewModelDTO modelDTO);
-        Task<LinkViewModelDTO> MyLinksGet(LinkViewModelDTO model_DTO);
-        LinkViewModelDTO UseLinkPost(LinkViewModelDTO model_DTO);
+        string GetUserIDFromUserName(string name);
+        //string GetUserID();
+        Task<LinkViewModelDTO> CreateShortLinkFromFullUrl(LinkViewModelDTO modelDTO, string userName);
+        LinkViewModelDTO GetURLsForCurrentUser(LinkViewModelDTO modelDTO, string userName);
+        LinkViewModelDTO FindAppropriateLinkInDB(LinkViewModelDTO modelDTO, string userName);
     }
 }

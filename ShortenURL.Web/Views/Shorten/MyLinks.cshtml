@@ -23,8 +23,6 @@
     <tbody>
         @foreach (var item in Model.UrlList)
         {
-            @if (Model.UserId == item.UserId)
-            {
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.FullUrl)
@@ -36,7 +34,6 @@
                     @Html.DisplayFor(modelItem => item.IsPrivate)
                 </td>
             </tr>
-            }
         }
     </tbody>
 </table>

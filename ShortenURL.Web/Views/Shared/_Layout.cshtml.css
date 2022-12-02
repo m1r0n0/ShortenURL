@@ -46,3 +46,9 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
+.navitems {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}

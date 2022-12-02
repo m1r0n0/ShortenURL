@@ -3,6 +3,9 @@ using BusinessLayer.Interfaces;
 using DataAccessLayer.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
+using System.Collections.Generic;
+using DataAccessLayer.Data;
 
 namespace BusinessLayer.Services
 {
@@ -25,26 +28,25 @@ namespace BusinessLayer.Services
             _configuration = configuration;
         }
 
-        public void GiveUserID(string _name)
+        public string GetUserIDFromUserName(string name)
         {
             foreach (var item in _context.UserList)
             {
-                if (_name == item.UserName)
+                if (name == item.UserName)
                 {
                     _userId = item.Id;
                 }
             }
-        }
-
-        public string GetUserID()
-        {
             return _userId;
         }
 
-        public async Task<LinkViewModelDTO> CreateLinkPost(LinkViewModelDTO modelDTO)
+        /*public string GetUserID()
         {
+            return _userId;
+        }*/
 
-
+        public async Task<LinkViewModelDTO> CreateShortLinkFromFullUrl(LinkViewModelDTO modelDTO, string userName)
+        {
             while (true)
             {
                 _shortened = _configuration["shortenedBegining"];
@@ -83,55 +85,53 @@ namespace BusinessLayer.Services
                     break;
                 }
             }
-
-            UrlObj = new Url { UserId = _userId, FullUrl = modelDTO.FullUrl, ShortUrl = _shortened, IsPrivate = modelDTO.IsPrivate };
+            UrlObj = new Url { UserId = GetUserIDFromUserName(userName), FullUrl = modelDTO.FullUrl, ShortUrl = _shortened, IsPrivate = modelDTO.IsPrivate };
             _context.UrlList.Add(UrlObj);
             await _context.SaveChangesAsync();
             modelDTO.ShortUrl = _shortened;
             return modelDTO;
         }
 
-        public async Task<LinkViewModelDTO> MyLinksGet(LinkViewModelDTO model_DTO)
+        public LinkViewModelDTO GetURLsForCurrentUser(LinkViewModelDTO modelDTO, string userName)
         {
             if (_context.UrlList != null)
             {
-                model_DTO.UrlList = await _context.UrlList.ToListAsync();
+                modelDTO.UrlList = _context.UrlList.Where(i => i.UserId == GetUserIDFromUserName(userName)).ToList();
             }
-            return model_DTO;
+            return modelDTO;
         }
 
-        public LinkViewModelDTO UseLinkPost(LinkViewModelDTO model_DTO)
+        public LinkViewModelDTO FindAppropriateLinkInDB(LinkViewModelDTO modelDTO, string userName)
         {
+            modelDTO.UserId = GetUserIDFromUserName(userName);
             foreach (var item in _context.UrlList)
             {
                 if (item.IsPrivate)
                 {
-                    if (model_DTO.ShortUrl == item.ShortUrl)
+                    if (modelDTO.ShortUrl == item.ShortUrl)
                     {
                         if (item.UserId == _userId)
                         {
-                            model_DTO.FullUrl = item.FullUrl;
+                            modelDTO.FullUrl = item.FullUrl;
                             break;
                         }
                         else
                         {
-                            model_DTO.FullUrl = "You don't have acces to this link!";
+                            modelDTO.FullUrl = "You don't have acces to this link!";
                             break;
                         }
                     }
                 }
                 else
                 {
-                    if (model_DTO.ShortUrl == item.ShortUrl)
+                    if (modelDTO.ShortUrl == item.ShortUrl)
                     {
-                        model_DTO.FullUrl = item.FullUrl;
+                        modelDTO.FullUrl = item.FullUrl;
                         break;
                     }
-
                 }
-
             }
-            return model_DTO;
+            return modelDTO;
         }
     }
 }

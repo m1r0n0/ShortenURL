@@ -25,5 +25,8 @@ namespace BusinessLayer.DTOs
         {
 			_urlList = UrlList;
         }
+        public LinkViewModelDTO()
+        {
+        }
     }
 }
