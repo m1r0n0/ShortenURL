@@ -36,9 +36,7 @@ namespace ShortenURL.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateLink(CreateLinkViewModel model)
         {
-            //LinkViewModelDTO linkViewModelDTO = new LinkViewModelDTO(model.FullUrl, model.ShortUrl, model.IsPrivate);
             LinkViewModelDTO linkViewModelDTO = _mapper.Map<LinkViewModelDTO>(model);
-            IsAuthenticated();
             linkViewModelDTO = await _shortenService.CreateShortLinkFromFullUrl(linkViewModelDTO, User.Identity.Name);
             model = _mapper.Map<CreateLinkViewModel>(linkViewModelDTO);          
             return View(model);
@@ -53,7 +51,7 @@ namespace ShortenURL.Controllers
             return View(model);
         }
 
-        [HttpGet]
+       /* [HttpGet]
         public IActionResult UseLink()
         {
             return View();
@@ -63,11 +61,10 @@ namespace ShortenURL.Controllers
         public IActionResult UseLink(UseLinkViewModel model)
         {
             LinkViewModelDTO linkViewModelDTO = _mapper.Map<LinkViewModelDTO>(model);
-            //IsAuthenticated();
-            linkViewModelDTO = _shortenService.FindAppropriateLinkInDB(linkViewModelDTO, User.Identity.Name);
-            model = _mapper.Map<UseLinkViewModel>(linkViewModelDTO);            
-            return View(model);
-        }
+            //linkViewModelDTO = _shortenService.FindAppropriateLinkInDB(linkViewModelDTO, User.Identity.Name);
+            //model = _mapper.Map<UseLinkViewModel>(linkViewModelDTO);
+            return Redirect(_shortenService.GetLinkToRedirect(linkViewModelDTO, User.Identity.Name));//View(model);
+        }*/
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

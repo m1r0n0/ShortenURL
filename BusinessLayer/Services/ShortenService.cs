@@ -18,6 +18,7 @@ namespace BusinessLayer.Services
         private string _userId = string.Empty;
         private bool _isThereSimilar = false;
         private int _key;
+        private string _checkHttp = "";
 
         Random Rand = new Random();
         public Url UrlObj { get; set; }
@@ -47,6 +48,7 @@ namespace BusinessLayer.Services
 
         public async Task<LinkViewModelDTO> CreateShortLinkFromFullUrl(LinkViewModelDTO modelDTO, string userName)
         {
+            modelDTO.UserId = GetUserIDFromUserName(userName);
             while (true)
             {
                 _shortened = _configuration["shortenedBegining"];
@@ -100,8 +102,7 @@ namespace BusinessLayer.Services
             }
             return modelDTO;
         }
-
-        public LinkViewModelDTO FindAppropriateLinkInDB(LinkViewModelDTO modelDTO, string userName)
+        public string GetLinkToRedirect(LinkViewModelDTO modelDTO, string userName)
         {
             modelDTO.UserId = GetUserIDFromUserName(userName);
             foreach (var item in _context.UrlList)
@@ -131,7 +132,48 @@ namespace BusinessLayer.Services
                     }
                 }
             }
-            return modelDTO;
+
+            for (int i = 0; i < 7; i++)
+            {
+                _checkHttp += modelDTO.FullUrl[i];
+            }
+            if ((_checkHttp != "http://") && (_checkHttp != "https:/"))
+            {
+                modelDTO.FullUrl = "https://" + modelDTO.FullUrl;
+            }
+            return modelDTO.FullUrl;
         }
+        /*public LinkViewModelDTO FindAppropriateLinkInDB(LinkViewModelDTO modelDTO, string userName)
+        {
+            modelDTO.UserId = GetUserIDFromUserName(userName);
+            foreach (var item in _context.UrlList)
+            {
+                if (item.IsPrivate)
+                {
+                    if (modelDTO.ShortUrl == item.ShortUrl)
+                    {
+                        if (item.UserId == _userId)
+                        {
+                            modelDTO.FullUrl = item.FullUrl;
+                            break;
+                        }
+                        else
+                        {
+                            modelDTO.FullUrl = "You don't have acces to this link!";
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    if (modelDTO.ShortUrl == item.ShortUrl)
+                    {
+                        modelDTO.FullUrl = item.FullUrl;
+                        break;
+                    }
+                }
+            }         
+            return modelDTO;
+        }*/
     }
 }

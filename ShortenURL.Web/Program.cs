@@ -24,6 +24,7 @@ builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationContext>();
 builder.Services.AddAutoMapper(typeof(AppMappingProfileForCreateLinkVM), typeof(AppMappingProfileForUseLinkVM), typeof(AppMappingProfileForMyLinksVM));
 builder.Services.AddScoped<IShortenService,ShortenService>();
+builder.Services.AddScoped<IRedirectService, RedirectService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -44,6 +45,10 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "shorturl.com",
+    pattern: "{controller=Redirect}/{action=DoRedirect}/{id?}");
 
 app.UseEndpoints(endpoints =>
 {
