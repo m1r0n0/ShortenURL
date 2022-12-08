@@ -1,6 +1,7 @@
 ﻿using BusinessLayer.Interfaces;
 using DataAccessLayer.Data;
 using Microsoft.Extensions.Configuration;
+using System.Xml.Linq;
 
 namespace BusinessLayer.Services
 {
@@ -20,11 +21,29 @@ namespace BusinessLayer.Services
             _configuration = configuration;
         }
         public string GetLinkToRedirect(string shortUrl, string userName)
-        {           
+        {
             if (shortUrl != null)
             {
                 shortUrl = _configuration["shortenedBegining"] + shortUrl;
-                _userId = _shortenService.GetUserIDFromUserName(userName);
+                var appropriateShortLink = _context.UrlList.Where(x => x.ShortUrl.Equals(shortUrl)).FirstOrDefault();
+                if (appropriateShortLink.IsPrivate)
+                {
+                    if (appropriateShortLink.UserId == _shortenService.GetUserIDFromUserName(userName))
+                    {
+                        _fullUrl = appropriateShortLink.FullUrl;
+                    }
+                    else
+                    {
+                        _fullUrl = "You don't have acces to this link!";
+                    }
+                }
+                else
+                {
+                    _fullUrl = appropriateShortLink.FullUrl;
+                }
+
+
+                /*_userId = _shortenService.GetUserIDFromUserName(userName);
                 foreach (var item in _context.UrlList)
                 {
                     if (item.IsPrivate)
@@ -51,7 +70,7 @@ namespace BusinessLayer.Services
                             break;
                         }
                     }
-                }
+                }*/
 
                 if (_fullUrl != string.Empty)
                 {
@@ -68,7 +87,7 @@ namespace BusinessLayer.Services
             }
             else
             {
-                return "https://shorturl.com" + _configuration["port"] + "/Home/Index";//IS IT LIKE THAT?    //"Home/Index"; 
+                return "https://shorturl.com" + _configuration["port"] + "/Home/Index"; 
             }
         }
     }

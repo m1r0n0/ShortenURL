@@ -31,20 +31,9 @@ namespace BusinessLayer.Services
 
         public string GetUserIDFromUserName(string name)
         {
-            foreach (var item in _context.UserList)
-            {
-                if (name == item.UserName)
-                {
-                    _userId = item.Id;
-                }
-            }
-            return _userId;
+            var r = _context.UserList.Where(x => x.UserName.Equals(name)).FirstOrDefault();
+            return r.Id;
         }
-
-        /*public string GetUserID()
-        {
-            return _userId;
-        }*/
 
         public async Task<LinkViewModelDTO> CreateShortLinkFromFullUrl(LinkViewModelDTO modelDTO, string userName)
         {
@@ -69,7 +58,25 @@ namespace BusinessLayer.Services
                     }
                 }
 
-                foreach (var item in _context.UrlList)
+                var appropriateShortLink = _context.UrlList.Where(x => x.ShortUrl.Equals(_shortened)).FirstOrDefault();
+                if (appropriateShortLink != null)
+                {
+                    if (_shortened == appropriateShortLink.ShortUrl)
+                    {
+                        _isThereSimilar = true;
+                        break;
+                    }
+                    else
+                    {
+                        _isThereSimilar = false;
+                    }
+                }
+                else
+                    break;
+                
+
+
+                /*foreach (var item in _context.UrlList)
                 {
                     if (_shortened == item.ShortUrl)
                     {
@@ -80,7 +87,7 @@ namespace BusinessLayer.Services
                     {
                         _isThereSimilar = false;
                     }
-                }
+                }*/
 
                 if (!_isThereSimilar)
                 {
@@ -102,7 +109,7 @@ namespace BusinessLayer.Services
             }
             return modelDTO;
         }
-        public string GetLinkToRedirect(LinkViewModelDTO modelDTO, string userName)
+        /*public string GetLinkToRedirect(LinkViewModelDTO modelDTO, string userName)
         {
             modelDTO.UserId = GetUserIDFromUserName(userName);
             foreach (var item in _context.UrlList)
@@ -142,7 +149,7 @@ namespace BusinessLayer.Services
                 modelDTO.FullUrl = "https://" + modelDTO.FullUrl;
             }
             return modelDTO.FullUrl;
-        }
+        }*/
         /*public LinkViewModelDTO FindAppropriateLinkInDB(LinkViewModelDTO modelDTO, string userName)
         {
             modelDTO.UserId = GetUserIDFromUserName(userName);
