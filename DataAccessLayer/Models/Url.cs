@@ -1,5 +1,8 @@
-﻿namespace DataAccessLayer.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace DataAccessLayer.Models
 {
+    [Index("UserId", "ShortUrl")]
     public class Url
     {
         public int Id { get; set; }

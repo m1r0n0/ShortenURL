@@ -1,15 +1,11 @@
 ﻿using BusinessLayer.Interfaces;
 using DataAccessLayer.Data;
 using Microsoft.Extensions.Configuration;
-using System.Xml.Linq;
 
 namespace BusinessLayer.Services
 {
     public class RedirectService : IRedirectService
     {
-        private string _userId = string.Empty;
-        private string _fullUrl = string.Empty;
-        private string _checkHttp = string.Empty;
         private readonly IShortenService _shortenService;
         private readonly ApplicationContext _context;
         private readonly IConfiguration _configuration;
@@ -22,55 +18,34 @@ namespace BusinessLayer.Services
         }
         public string GetLinkToRedirect(string shortUrl, string userName)
         {
+            string _fullUrl = string.Empty;
+            string _checkHttp = string.Empty;
             if (shortUrl != null)
             {
                 shortUrl = _configuration["shortenedBegining"] + shortUrl;
                 var appropriateShortLink = _context.UrlList.Where(x => x.ShortUrl.Equals(shortUrl)).FirstOrDefault();
-                if (appropriateShortLink.IsPrivate)
+                if (appropriateShortLink != null)
                 {
-                    if (appropriateShortLink.UserId == _shortenService.GetUserIDFromUserName(userName))
+                    if (appropriateShortLink.IsPrivate)
                     {
-                        _fullUrl = appropriateShortLink.FullUrl;
+                        if (appropriateShortLink.UserId == _shortenService.GetUserIDFromUserName(userName))
+                        {
+                            _fullUrl = appropriateShortLink.FullUrl;
+                        }
+                        else
+                        {
+                            _fullUrl = "https://shorturl.com" + _configuration["port"] + "/Errors/PageNotFoundError";//"You don't have acces to this link!";
+                        }
                     }
                     else
                     {
-                        _fullUrl = "You don't have acces to this link!";
+                        _fullUrl = appropriateShortLink.FullUrl;
                     }
                 }
                 else
                 {
-                    _fullUrl = appropriateShortLink.FullUrl;
+                    _fullUrl = "https://shorturl.com" + _configuration["port"] + "/Errors/PageNotFoundError";
                 }
-
-
-                /*_userId = _shortenService.GetUserIDFromUserName(userName);
-                foreach (var item in _context.UrlList)
-                {
-                    if (item.IsPrivate)
-                    {
-                        if (shortUrl == item.ShortUrl)
-                        {
-                            if (item.UserId == _userId)
-                            {
-                                _fullUrl = item.FullUrl;
-                                break;
-                            }
-                            else
-                            {
-                                _fullUrl = "You don't have acces to this link!";
-                                break;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (shortUrl == item.ShortUrl)
-                        {
-                            _fullUrl = item.FullUrl;
-                            break;
-                        }
-                    }
-                }*/
 
                 if (_fullUrl != string.Empty)
                 {
@@ -87,7 +62,7 @@ namespace BusinessLayer.Services
             }
             else
             {
-                return "https://shorturl.com" + _configuration["port"] + "/Home/Index"; 
+                return "https://shorturl.com" + _configuration["port"] + "/Home/Index";
             }
         }
     }
