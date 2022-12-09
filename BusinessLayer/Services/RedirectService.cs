@@ -22,15 +22,16 @@ namespace BusinessLayer.Services
             string _checkHttp = string.Empty;
             if (shortUrl != null)
             {
-                shortUrl = _configuration["shortenedBegining"] + shortUrl;
-                var appropriateShortLink = _context.UrlList.Where(x => x.ShortUrl.Equals(shortUrl)).FirstOrDefault();
-                if (appropriateShortLink != null)
+                int _id = shortURLtoID(shortUrl);
+                var _url = _context.UrlList.Where(x => x.Id.Equals(_id)).FirstOrDefault();
+
+                if (_url != null)
                 {
-                    if (appropriateShortLink.IsPrivate)
+                    if (_url.IsPrivate)
                     {
-                        if (appropriateShortLink.UserId == _shortenService.GetUserIDFromUserName(userName))
+                        if (_url.UserId == _shortenService.GetUserIDFromUserName(userName))
                         {
-                            _fullUrl = appropriateShortLink.FullUrl;
+                            _fullUrl = _url.FullUrl;
                         }
                         else
                         {
@@ -39,7 +40,7 @@ namespace BusinessLayer.Services
                     }
                     else
                     {
-                        _fullUrl = appropriateShortLink.FullUrl;
+                        _fullUrl = _url.FullUrl;
                     }
                 }
                 else
@@ -64,6 +65,27 @@ namespace BusinessLayer.Services
             {
                 return "https://shorturl.com" + _configuration["port"] + "/Home/Index";
             }
+        }
+
+        // Function to get integer ID back from a short url 
+        static int shortURLtoID(String shortURL)
+        {
+            int id = 0; // initialize result 
+
+            // A simple base conversion logic 
+            for (int i = 0; i < shortURL.Length; i++)
+            {
+                if ('a' <= shortURL[i] &&
+                           shortURL[i] <= 'z')
+                    id = id * 62 + shortURL[i] - 'a';
+                if ('A' <= shortURL[i] &&
+                           shortURL[i] <= 'Z')
+                    id = id * 62 + shortURL[i] - 'A' + 26;
+                if ('0' <= shortURL[i] &&
+                           shortURL[i] <= '9')
+                    id = id * 62 + shortURL[i] - '0' + 52;
+            }
+            return id;
         }
     }
 }

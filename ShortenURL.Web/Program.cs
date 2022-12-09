@@ -22,7 +22,7 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationContext>();
-builder.Services.AddAutoMapper(typeof(AppMappingProfileForCreateLinkVM), typeof(AppMappingProfileForUseLinkVM), typeof(AppMappingProfileForMyLinksVM));
+builder.Services.AddAutoMapper(typeof(AppMappingProfileForCreateLinkVM), typeof(AppMappingProfileForMyLinksVM));
 builder.Services.AddScoped<IShortenService,ShortenService>();
 builder.Services.AddScoped<IRedirectService, RedirectService>();
 var app = builder.Build();
@@ -64,13 +64,6 @@ public class AppMappingProfileForCreateLinkVM : Profile
     public AppMappingProfileForCreateLinkVM()
     {
         CreateMap<LinkViewModelDTO, CreateLinkViewModel>().ReverseMap();
-    }
-}
-public class AppMappingProfileForUseLinkVM : Profile
-{
-    public AppMappingProfileForUseLinkVM()
-    {
-        CreateMap<LinkViewModelDTO, UseLinkViewModel>().ReverseMap();
     }
 }
 public class AppMappingProfileForMyLinksVM : Profile

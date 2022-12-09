@@ -51,21 +51,6 @@ namespace ShortenURL.Controllers
             return View(model);
         }
 
-       /* [HttpGet]
-        public IActionResult UseLink()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult UseLink(UseLinkViewModel model)
-        {
-            LinkViewModelDTO linkViewModelDTO = _mapper.Map<LinkViewModelDTO>(model);
-            //linkViewModelDTO = _shortenService.FindAppropriateLinkInDB(linkViewModelDTO, User.Identity.Name);
-            //model = _mapper.Map<UseLinkViewModel>(linkViewModelDTO);
-            return Redirect(_shortenService.GetLinkToRedirect(linkViewModelDTO, User.Identity.Name));//View(model);
-        }*/
-
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

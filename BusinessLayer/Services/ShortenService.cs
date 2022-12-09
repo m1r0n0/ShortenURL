@@ -1,7 +1,9 @@
 ﻿using BusinessLayer.DTOs;
 using BusinessLayer.Interfaces;
 using DataAccessLayer.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Linq;
 
 namespace BusinessLayer.Services
 {
@@ -22,7 +24,13 @@ namespace BusinessLayer.Services
         public string GetUserIDFromUserName(string name)
         {
             var r = _context.UserList.Where(x => x.UserName.Equals(name)).FirstOrDefault();
-            return r.Id;
+            if (r == null)
+            {
+                return string.Empty;
+            } else
+            {
+                return r.Id;
+            }
         }
 
         public async Task<LinkViewModelDTO> CreateShortLinkFromFullUrl(LinkViewModelDTO modelDTO, string userName)
@@ -33,24 +41,6 @@ namespace BusinessLayer.Services
             modelDTO.UserId = GetUserIDFromUserName(userName);
             while (true)
             {
-                _shortened = _configuration["shortenedBegining"];
-                for (int i = 0; i < 4; i++)
-                {
-                    _key = Rand.Next(1, 4);
-                    switch (_key)
-                    {
-                        case 1:
-                            _shortened += (char)Rand.Next(48, 58);
-                            break;
-                        case 2:
-                            _shortened += (char)Rand.Next(65, 91);
-                            break;
-                        case 3:
-                            _shortened += (char)Rand.Next(97, 123);
-                            break;
-                    }
-                }
-
                 var appropriateShortLink = _context.UrlList.Where(x => x.ShortUrl.Equals(_shortened)).FirstOrDefault();
                 if (appropriateShortLink != null)
                 {
@@ -72,10 +62,12 @@ namespace BusinessLayer.Services
                     break;
                 }
             }
-            UrlObj = new Url { UserId = GetUserIDFromUserName(userName), FullUrl = modelDTO.FullUrl, ShortUrl = _shortened, IsPrivate = modelDTO.IsPrivate };
+            UrlObj = new Url { UserId = GetUserIDFromUserName(userName), FullUrl = modelDTO.FullUrl, IsPrivate = modelDTO.IsPrivate };
             _context.UrlList.Add(UrlObj);
             await _context.SaveChangesAsync();
-            modelDTO.ShortUrl = _shortened;
+            UrlObj.ShortUrl = idToShortURL(UrlObj.Id);
+            await _context.SaveChangesAsync();
+            modelDTO.ShortUrl = _configuration["shortenedBegining"] + UrlObj.ShortUrl;
             return modelDTO;
         }
 
@@ -88,16 +80,36 @@ namespace BusinessLayer.Services
             return modelDTO;
         }
 
-        public string EncodeUrl (int urlId)
+        static String idToShortURL(int n)
         {
-            string base62String = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMOPQRSTUVWXYZ";
-            string hashString = "";
-            while (urlId > 0) 
+            // Map to store 62 possible characters 
+            char[] map = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToCharArray();
+
+            String shorturl = "";
+
+            // Convert given integer id to a base 62 number 
+            while (n > 0)
             {
-                hashString += base62String[urlId % 62];
-                urlId /= 62;
+                // use above map to store actual character 
+                // in short url 
+                shorturl += (map[n % 62]);
+                n = n / 62;
             }
-            return hashString;
+
+            // Reverse shortURL to complete base conversion 
+            return reverse(shorturl);
+        }
+        static String reverse(String input)
+        {
+            char[] a = input.ToCharArray();
+            int l, r = a.Length - 1;
+            for (l = 0; l < r; l++, r--)
+            {
+                char temp = a[l];
+                a[l] = a[r];
+                a[r] = temp;
+            }
+            return String.Join("", a);
         }
     }
 }
