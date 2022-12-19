@@ -13,7 +13,7 @@ namespace BusinessLayer.Services
         private readonly DataAccessLayer.Data.ApplicationContext _context;
 
         Random Rand = new Random();
-        public Url UrlObj { get; set; }
+        private Url UrlObj { get; set; }
 
         public ShortenService(DataAccessLayer.Data.ApplicationContext context, IConfiguration configuration)
         {
@@ -65,7 +65,7 @@ namespace BusinessLayer.Services
             UrlObj = new Url { UserId = GetUserIDFromUserName(userName), FullUrl = modelDTO.FullUrl, IsPrivate = modelDTO.IsPrivate };
             _context.UrlList.Add(UrlObj);
             await _context.SaveChangesAsync();
-            UrlObj.ShortUrl = idToShortURL(UrlObj.Id);
+            UrlObj.ShortUrl = IdToShortURL(UrlObj.Id);
             await _context.SaveChangesAsync();
             modelDTO.ShortUrl = _configuration["shortenedBegining"] + UrlObj.ShortUrl;
             return modelDTO;
@@ -80,12 +80,12 @@ namespace BusinessLayer.Services
             return modelDTO;
         }
 
-        static String idToShortURL(int n)
+        public string IdToShortURL(int n)
         {
             // Map to store 62 possible characters 
             char[] map = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToCharArray();
 
-            String shorturl = "";
+            string shorturl = "";
 
             // Convert given integer id to a base 62 number 
             while (n > 0)
@@ -97,19 +97,35 @@ namespace BusinessLayer.Services
             }
 
             // Reverse shortURL to complete base conversion 
-            return reverse(shorturl);
+            return ReverseString(shorturl);
         }
-        static String reverse(String input)
+
+        public string ReverseString(string s)
         {
-            char[] a = input.ToCharArray();
-            int l, r = a.Length - 1;
-            for (l = 0; l < r; l++, r--)
+            char[] charArray = s.ToCharArray();
+            Array.Reverse(charArray);
+            return new string(charArray);
+        }
+
+        // Function to get integer ID back from a short url 
+        public int ShortURLToID(string shortURL)
+        {
+            int id = 0; // initialize result 
+
+            // A simple base conversion logic 
+            for (int i = 0; i < shortURL.Length; i++)
             {
-                char temp = a[l];
-                a[l] = a[r];
-                a[r] = temp;
+                if ('a' <= shortURL[i] &&
+                           shortURL[i] <= 'z')
+                    id = id * 62 + shortURL[i] - 'a';
+                if ('A' <= shortURL[i] &&
+                           shortURL[i] <= 'Z')
+                    id = id * 62 + shortURL[i] - 'A' + 26;
+                if ('0' <= shortURL[i] &&
+                           shortURL[i] <= '9')
+                    id = id * 62 + shortURL[i] - '0' + 52;
             }
-            return String.Join("", a);
+            return id;
         }
     }
 }
