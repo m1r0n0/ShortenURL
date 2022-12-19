@@ -5,6 +5,7 @@ using BusinessLayer.Services;
 using Microsoft.Extensions.Configuration;
 using AutoMapper;
 using BusinessLayer.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ShortenURL.Web.Controllers
 {

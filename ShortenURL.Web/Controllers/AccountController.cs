@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ShortenURL.Models;
 using DataAccessLayer.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ShortenURL.Controllers
 {
@@ -80,6 +81,7 @@ namespace ShortenURL.Controllers
             return View(model);
         }
 
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using ShortenURL.Models;
 using System.Diagnostics;
 using BusinessLayer.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ShortenURL.Controllers
 {
@@ -19,13 +20,13 @@ namespace ShortenURL.Controllers
             _mapper = mapper;
         }
 
-        private void IsAuthenticated()
+/*        private void IsAuthenticated()
         {
             if (User.Identity.IsAuthenticated)
             {
                 _shortenService.GetUserIDFromUserName(User.Identity.Name);
             }
-        }
+        }*/
 
         [HttpGet]
         public IActionResult CreateLink()
@@ -42,6 +43,7 @@ namespace ShortenURL.Controllers
             return View(model);
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult MyLinks(MyLinksViewModel model)
         {
