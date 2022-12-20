@@ -13,7 +13,6 @@ namespace BusinessLayer.Services
         private readonly DataAccessLayer.Data.ApplicationContext _context;
 
         Random Rand = new Random();
-        private Url UrlObj { get; set; }
 
         public ShortenService(DataAccessLayer.Data.ApplicationContext context, IConfiguration configuration)
         {
@@ -62,12 +61,12 @@ namespace BusinessLayer.Services
                     break;
                 }
             }
-            UrlObj = new Url { UserId = GetUserIDFromUserName(userName), FullUrl = modelDTO.FullUrl, IsPrivate = modelDTO.IsPrivate };
-            _context.UrlList.Add(UrlObj);
+            Url urlObj = new Url { UserId = GetUserIDFromUserName(userName), FullUrl = modelDTO.FullUrl, IsPrivate = modelDTO.IsPrivate };
+            _context.UrlList.Add(urlObj);
             await _context.SaveChangesAsync();
-            UrlObj.ShortUrl = IdToShortURL(UrlObj.Id);
+            urlObj.ShortUrl = IdToShortURL(urlObj.Id);
             await _context.SaveChangesAsync();
-            modelDTO.ShortUrl = _configuration["shortenedBegining"] + UrlObj.ShortUrl;
+            modelDTO.ShortUrl = _configuration["shortenedBegining"] + urlObj.ShortUrl;
             return modelDTO;
         }
 
@@ -80,7 +79,7 @@ namespace BusinessLayer.Services
             return modelDTO;
         }
 
-        public string IdToShortURL(int n)
+        public string? IdToShortURL(int n)
         {
             // Map to store 62 possible characters 
             char[] map = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToCharArray();
@@ -95,17 +94,16 @@ namespace BusinessLayer.Services
                 shorturl += (map[n % 62]);
                 n = n / 62;
             }
-
             // Reverse shortURL to complete base conversion 
-            return ReverseString(shorturl);
+            return new String(shorturl.ToCharArray().Reverse().ToArray()).ToString(); ;
         }
 
-        public string ReverseString(string s)
+        /*public string ReverseString(string s)
         {
             char[] charArray = s.ToCharArray();
             Array.Reverse(charArray);
             return new string(charArray);
-        }
+        }*/
 
         // Function to get integer ID back from a short url 
         public int ShortURLToID(string shortURL)

@@ -13,6 +13,7 @@ using ShortenURL.Models;
 using BusinessLayer.Services;
 using ShortenURL.Controllers;
 using BusinessLayer.Interfaces;
+using ShortenURL.MappingProfiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,7 +60,7 @@ app.UseEndpoints(endpoints =>
 
 app.Run();
 
-public class AppMappingProfileForCreateLinkVM : Profile
+/*public class AppMappingProfileForCreateLinkVM : Profile
 {
     public AppMappingProfileForCreateLinkVM()
     {
@@ -72,4 +73,4 @@ public class AppMappingProfileForMyLinksVM : Profile
     {
         CreateMap<LinkViewModelDTO, MyLinksViewModel>().ReverseMap();
     }
-}
+}*/

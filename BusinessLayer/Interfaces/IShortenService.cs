@@ -13,7 +13,7 @@ namespace BusinessLayer.Interfaces
         Task<LinkViewModelDTO> CreateShortLinkFromFullUrl(LinkViewModelDTO modelDTO, string userName);
         LinkViewModelDTO GetURLsForCurrentUser(LinkViewModelDTO modelDTO, string userName);
         string IdToShortURL(int n);
-        string ReverseString(string s);
+        //string ReverseString(string s);
         int ShortURLToID(string shortUrl);
 
     }
