@@ -79,7 +79,7 @@ namespace BusinessLayer.Services
             return modelDTO;
         }
 
-        public string IdToShortURL(int n)
+        public string? IdToShortURL(int n)
         {
             // Map to store 62 possible characters 
             char[] map = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToCharArray();
@@ -94,18 +94,16 @@ namespace BusinessLayer.Services
                 shorturl += (map[n % 62]);
                 n = n / 62;
             }
-
             // Reverse shortURL to complete base conversion 
-            //return ReverseString(shorturl);
-            return (string)shorturl.Reverse();
+            return new String(shorturl.ToCharArray().Reverse().ToArray()).ToString(); ;
         }
 
-        public string ReverseString(string s)
+        /*public string ReverseString(string s)
         {
             char[] charArray = s.ToCharArray();
             Array.Reverse(charArray);
             return new string(charArray);
-        }
+        }*/
 
         // Function to get integer ID back from a short url 
         public int ShortURLToID(string shortURL)

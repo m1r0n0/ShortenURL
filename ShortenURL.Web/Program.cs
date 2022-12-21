@@ -6,13 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using DataAccessLayer.Data;
-using AutoMapper;
-using System;
-using BusinessLayer.DTOs;
-using ShortenURL.Models;
 using BusinessLayer.Services;
-using ShortenURL.Controllers;
 using BusinessLayer.Interfaces;
+using ShortenURL.MappingProfiles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,18 +54,3 @@ app.UseEndpoints(endpoints =>
 });
 
 app.Run();
-
-public class AppMappingProfileForCreateLinkVM : Profile
-{
-    public AppMappingProfileForCreateLinkVM()
-    {
-        CreateMap<LinkViewModelDTO, CreateLinkViewModel>().ReverseMap();
-    }
-}
-public class AppMappingProfileForMyLinksVM : Profile
-{
-    public AppMappingProfileForMyLinksVM()
-    {
-        CreateMap<LinkViewModelDTO, MyLinksViewModel>().ReverseMap();
-    }
-}

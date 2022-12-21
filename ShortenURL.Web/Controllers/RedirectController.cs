@@ -24,7 +24,7 @@ namespace ShortenURL.Web.Controllers
         [Route("{id?}")]
         public IActionResult DoRedirect(string? id)
         {
-            return Redirect(_redirectService.GetLinkToRedirect(id, User.Identity.Name));
+            return Redirect(_redirectService.GetLinkToRedirect(id, User?.Identity?.Name));
         }
     }
 }

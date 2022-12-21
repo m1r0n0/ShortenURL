@@ -20,14 +20,6 @@ namespace ShortenURL.Controllers
             _mapper = mapper;
         }
 
-/*        private void IsAuthenticated()
-        {
-            if (User.Identity.IsAuthenticated)
-            {
-                _shortenService.GetUserIDFromUserName(User.Identity.Name);
-            }
-        }*/
-
         [HttpGet]
         public IActionResult CreateLink()
         {
@@ -38,8 +30,8 @@ namespace ShortenURL.Controllers
         public async Task<IActionResult> CreateLink(CreateLinkViewModel model)
         {
             LinkViewModelDTO linkViewModelDTO = _mapper.Map<LinkViewModelDTO>(model);
-            linkViewModelDTO ??= await _shortenService.CreateShortLinkFromFullUrl(linkViewModelDTO, User.Identity.Name);
-            model ??= _mapper.Map<CreateLinkViewModel>(linkViewModelDTO);          
+            linkViewModelDTO = await _shortenService.CreateShortLinkFromFullUrl(linkViewModelDTO, User?.Identity?.Name);
+            model = _mapper.Map<CreateLinkViewModel>(linkViewModelDTO);          
             return View(model);
         }
 
