@@ -13,7 +13,6 @@ namespace BusinessLayer.Services
         private readonly DataAccessLayer.Data.ApplicationContext _context;
 
         Random Rand = new Random();
-        private Url UrlObj { get; set; }
 
         public ShortenService(DataAccessLayer.Data.ApplicationContext context, IConfiguration configuration)
         {
@@ -62,12 +61,12 @@ namespace BusinessLayer.Services
                     break;
                 }
             }
-            UrlObj = new Url { UserId = GetUserIDFromUserName(userName), FullUrl = modelDTO.FullUrl, IsPrivate = modelDTO.IsPrivate };
-            _context.UrlList.Add(UrlObj);
+            Url urlObj = new Url { UserId = GetUserIDFromUserName(userName), FullUrl = modelDTO.FullUrl, IsPrivate = modelDTO.IsPrivate };
+            _context.UrlList.Add(urlObj);
             await _context.SaveChangesAsync();
-            UrlObj.ShortUrl = IdToShortURL(UrlObj.Id);
+            urlObj.ShortUrl = IdToShortURL(urlObj.Id);
             await _context.SaveChangesAsync();
-            modelDTO.ShortUrl = _configuration["shortenedBegining"] + UrlObj.ShortUrl;
+            modelDTO.ShortUrl = _configuration["shortenedBegining"] + urlObj.ShortUrl;
             return modelDTO;
         }
 
@@ -97,7 +96,8 @@ namespace BusinessLayer.Services
             }
 
             // Reverse shortURL to complete base conversion 
-            return ReverseString(shorturl);
+            //return ReverseString(shorturl);
+            return (string)shorturl.Reverse();
         }
 
         public string ReverseString(string s)
