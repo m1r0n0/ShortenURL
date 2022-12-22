@@ -24,7 +24,7 @@ namespace BusinessLayer.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<LinkViewModelDTO> CreateShortLinkFromFullUrl(LinkViewModelDTO modelDTO, string userName)
+        public async Task<LinkViewModelDTO> CreateShortLinkFromFullUrl(LinkViewModelDTO modelDTO)
         {
             string _shortened = string.Empty;
             bool _isThereSimilar = false;
@@ -62,12 +62,16 @@ namespace BusinessLayer.Services
             return modelDTO;
         }
 
-        public LinkViewModelDTO GetURLsForCurrentUser(LinkViewModelDTO modelDTO, string userName)
+        public LinkViewModelDTO GetURLsForCurrentUser(LinkViewModelDTO modelDTO)
         {
             if (_context.UrlList != null)
             {
                 var userIdFromUserName = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
                 modelDTO.UrlList = _context.UrlList.Where(i => i.UserId == userIdFromUserName).ToList();
+                foreach (Url url in _context.UrlList)
+                {
+                    url.ShortUrl = _configuration["shortenedBegining"] + url.ShortUrl;
+                }
             }
             return modelDTO;
         }

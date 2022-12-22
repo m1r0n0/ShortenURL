@@ -30,7 +30,7 @@ namespace ShortenURL.Controllers
         public async Task<IActionResult> CreateLink(CreateLinkViewModel model)
         {
             LinkViewModelDTO linkViewModelDTO = _mapper.Map<LinkViewModelDTO>(model);
-            linkViewModelDTO = await _shortenService.CreateShortLinkFromFullUrl(linkViewModelDTO, User?.Identity?.Name);
+            linkViewModelDTO = await _shortenService.CreateShortLinkFromFullUrl(linkViewModelDTO);
             model = _mapper.Map<CreateLinkViewModel>(linkViewModelDTO);          
             return View(model);
         }
@@ -40,7 +40,7 @@ namespace ShortenURL.Controllers
         public IActionResult MyLinks(MyLinksViewModel model)
         {
             LinkViewModelDTO linkViewModelDTO = _mapper.Map<LinkViewModelDTO>(model);
-            linkViewModelDTO = _shortenService.GetURLsForCurrentUser(linkViewModelDTO, User.Identity.Name);
+            linkViewModelDTO = _shortenService.GetURLsForCurrentUser(linkViewModelDTO);
             model = _mapper.Map<MyLinksViewModel>(linkViewModelDTO);
             return View(model);
         }
