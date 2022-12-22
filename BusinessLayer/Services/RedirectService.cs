@@ -1,6 +1,8 @@
 ﻿using BusinessLayer.Interfaces;
 using DataAccessLayer.Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using System.Security.Claims;
 
 namespace BusinessLayer.Services
 {
@@ -9,12 +11,14 @@ namespace BusinessLayer.Services
         private readonly IShortenService _shortenService;
         private readonly ApplicationContext _context;
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public RedirectService(IShortenService shortenService, ApplicationContext applicationContext, IConfiguration configuration)
+        public RedirectService(IShortenService shortenService, ApplicationContext applicationContext, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _shortenService = shortenService;
             _context = applicationContext;
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
         public string GetLinkToRedirect(string shortUrl, string userName)
         {
@@ -29,13 +33,13 @@ namespace BusinessLayer.Services
                 {
                     if (_url.IsPrivate)
                     {
-                        if (_url.UserId == _shortenService.GetUserIDFromUserName(userName))
+                        if (_url.UserId == _httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value)
                         {
                             _fullUrl = _url.FullUrl;
                         }
                         else
                         {
-                            _fullUrl = "https://shorturl.com" + _configuration["port"] + "/Errors/PageNotFoundError";//"You don't have acces to this link!";
+                            _fullUrl = "https://shorturl.com" + _configuration["port"] + "/Errors/PageNotFoundError";
                         }
                     }
                     else

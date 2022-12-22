@@ -1,9 +1,11 @@
 ﻿using BusinessLayer.DTOs;
 using BusinessLayer.Interfaces;
 using DataAccessLayer.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
+using System.Security.Claims;
 
 namespace BusinessLayer.Services
 {
@@ -11,25 +13,15 @@ namespace BusinessLayer.Services
     {
         private readonly IConfiguration _configuration;
         private readonly DataAccessLayer.Data.ApplicationContext _context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         Random Rand = new Random();
 
-        public ShortenService(DataAccessLayer.Data.ApplicationContext context, IConfiguration configuration)
+        public ShortenService(DataAccessLayer.Data.ApplicationContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _configuration = configuration;
-        }
-
-        public string GetUserIDFromUserName(string name)
-        {
-            var r = _context.UserList.Where(x => x.UserName.Equals(name)).FirstOrDefault();
-            if (r == null)
-            {
-                return string.Empty;
-            } else
-            {
-                return r.Id;
-            }
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<LinkViewModelDTO> CreateShortLinkFromFullUrl(LinkViewModelDTO modelDTO, string userName)
@@ -37,7 +29,7 @@ namespace BusinessLayer.Services
             string _shortened = string.Empty;
             bool _isThereSimilar = false;
             int _key;
-            modelDTO.UserId = GetUserIDFromUserName(userName);
+            modelDTO.UserId = _httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
             while (true)
             {
                 var appropriateShortLink = _context.UrlList.Where(x => x.ShortUrl.Equals(_shortened)).FirstOrDefault();
@@ -61,7 +53,7 @@ namespace BusinessLayer.Services
                     break;
                 }
             }
-            Url urlObj = new Url { UserId = GetUserIDFromUserName(userName), FullUrl = modelDTO.FullUrl, IsPrivate = modelDTO.IsPrivate };
+            Url urlObj = new Url { UserId = _httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, FullUrl = modelDTO.FullUrl, IsPrivate = modelDTO.IsPrivate };
             _context.UrlList.Add(urlObj);
             await _context.SaveChangesAsync();
             urlObj.ShortUrl = IdToShortURL(urlObj.Id);
@@ -74,7 +66,8 @@ namespace BusinessLayer.Services
         {
             if (_context.UrlList != null)
             {
-                modelDTO.UrlList = _context.UrlList.Where(i => i.UserId == GetUserIDFromUserName(userName)).ToList();
+                var userIdFromUserName = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
+                modelDTO.UrlList = _context.UrlList.Where(i => i.UserId == userIdFromUserName).ToList();
             }
             return modelDTO;
         }
@@ -97,13 +90,6 @@ namespace BusinessLayer.Services
             // Reverse shortURL to complete base conversion 
             return new String(shorturl.ToCharArray().Reverse().ToArray()).ToString(); ;
         }
-
-        /*public string ReverseString(string s)
-        {
-            char[] charArray = s.ToCharArray();
-            Array.Reverse(charArray);
-            return new string(charArray);
-        }*/
 
         // Function to get integer ID back from a short url 
         public int ShortURLToID(string shortURL)

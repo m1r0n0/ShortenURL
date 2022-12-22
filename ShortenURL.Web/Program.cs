@@ -17,10 +17,13 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddIdentity<User, IdentityRole>()
-    .AddEntityFrameworkStores<ApplicationContext>();
+    .AddEntityFrameworkStores<ApplicationContext>()
+    .AddDefaultTokenProviders();
+builder.Services.AddMvc();
 builder.Services.AddAutoMapper(typeof(AppMappingProfileForCreateLinkVM), typeof(AppMappingProfileForMyLinksVM));
 builder.Services.AddScoped<IShortenService,ShortenService>();
 builder.Services.AddScoped<IRedirectService, RedirectService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

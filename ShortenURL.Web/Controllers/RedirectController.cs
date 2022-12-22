@@ -20,7 +20,6 @@ namespace ShortenURL.Web.Controllers
             _mapper = mapper;
         }
 
-
         [Route("{id?}")]
         public IActionResult DoRedirect(string? id)
         {
