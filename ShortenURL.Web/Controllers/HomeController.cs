@@ -5,11 +5,11 @@ using System.Diagnostics;
 
 namespace ShortenURL.Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : AppController
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IHttpContextAccessor httpContextAccessor, ILogger<HomeController> logger) : base(httpContextAccessor)
         {
             _logger = logger;
         }

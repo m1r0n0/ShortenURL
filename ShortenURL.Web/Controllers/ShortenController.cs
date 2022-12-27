@@ -6,15 +6,17 @@ using ShortenURL.Models;
 using System.Diagnostics;
 using BusinessLayer.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using ShortenURL.Web.Controllers;
+using Microsoft.AspNetCore.Http;
 
 namespace ShortenURL.Controllers
 {
-    public class ShortenController : Controller
+    public class ShortenController : AppController
     {
         private readonly IShortenService _shortenService;
         private readonly IMapper _mapper;
 
-        public ShortenController(IShortenService shortenService, IMapper mapper)
+        public ShortenController(IHttpContextAccessor httpContextAccessor, IShortenService shortenService, IMapper mapper) : base(httpContextAccessor)
         {
             _shortenService = shortenService;
             _mapper = mapper;
@@ -30,7 +32,7 @@ namespace ShortenURL.Controllers
         public async Task<IActionResult> CreateLink(CreateLinkViewModel model)
         {
             LinkViewModelDTO linkViewModelDTO = _mapper.Map<LinkViewModelDTO>(model);
-            linkViewModelDTO = await _shortenService.CreateShortLinkFromFullUrl(linkViewModelDTO);
+            linkViewModelDTO = await _shortenService.CreateShortLinkFromFullUrl(linkViewModelDTO, GetUserIdFromClaims());
             model = _mapper.Map<CreateLinkViewModel>(linkViewModelDTO);          
             return View(model);
         }
@@ -40,7 +42,7 @@ namespace ShortenURL.Controllers
         public IActionResult MyLinks(MyLinksViewModel model)
         {
             LinkViewModelDTO linkViewModelDTO = _mapper.Map<LinkViewModelDTO>(model);
-            linkViewModelDTO = _shortenService.GetURLsForCurrentUser(linkViewModelDTO);
+            linkViewModelDTO = _shortenService.GetURLsForCurrentUser(linkViewModelDTO, GetUserIdFromClaims());
             model = _mapper.Map<MyLinksViewModel>(linkViewModelDTO);
             return View(model);
         }

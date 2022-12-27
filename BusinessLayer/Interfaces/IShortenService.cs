@@ -9,8 +9,8 @@ namespace BusinessLayer.Interfaces
 {
     public interface IShortenService
     {
-        Task<LinkViewModelDTO> CreateShortLinkFromFullUrl(LinkViewModelDTO modelDTO);
-        LinkViewModelDTO GetURLsForCurrentUser(LinkViewModelDTO modelDTO);
+        Task<LinkViewModelDTO> CreateShortLinkFromFullUrl(LinkViewModelDTO modelDTO, string userId);
+        LinkViewModelDTO GetURLsForCurrentUser(LinkViewModelDTO modelDTO, string userId);
         string IdToShortURL(int n);
         int ShortURLToID(string shortUrl);
 

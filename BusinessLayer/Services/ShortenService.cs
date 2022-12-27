@@ -13,23 +13,18 @@ namespace BusinessLayer.Services
     {
         private readonly IConfiguration _configuration;
         private readonly DataAccessLayer.Data.ApplicationContext _context;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        Random Rand = new Random();
-
-        public ShortenService(DataAccessLayer.Data.ApplicationContext context, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+        public ShortenService(DataAccessLayer.Data.ApplicationContext context, IConfiguration configuration)
         {
             _context = context;
             _configuration = configuration;
-            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<LinkViewModelDTO> CreateShortLinkFromFullUrl(LinkViewModelDTO modelDTO)
+        public async Task<LinkViewModelDTO> CreateShortLinkFromFullUrl(LinkViewModelDTO modelDTO, string userId)
         {
             string _shortened = string.Empty;
             bool _isThereSimilar = false;
-            int _key;
-            modelDTO.UserId = _httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+            modelDTO.UserId = userId;
             while (true)
             {
                 var appropriateShortLink = _context.UrlList.Where(x => x.ShortUrl.Equals(_shortened)).FirstOrDefault();
@@ -53,7 +48,7 @@ namespace BusinessLayer.Services
                     break;
                 }
             }
-            Url urlObj = new Url { UserId = _httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, FullUrl = modelDTO.FullUrl, IsPrivate = modelDTO.IsPrivate };
+            Url urlObj = new() { UserId = modelDTO.UserId, FullUrl = modelDTO.FullUrl, IsPrivate = modelDTO.IsPrivate };
             _context.UrlList.Add(urlObj);
             await _context.SaveChangesAsync();
             urlObj.ShortUrl = IdToShortURL(urlObj.Id);
@@ -62,12 +57,11 @@ namespace BusinessLayer.Services
             return modelDTO;
         }
 
-        public LinkViewModelDTO GetURLsForCurrentUser(LinkViewModelDTO modelDTO)
+        public LinkViewModelDTO GetURLsForCurrentUser(LinkViewModelDTO modelDTO, string userId)
         {
             if (_context.UrlList != null)
             {
-                var userIdFromUserName = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value;
-                modelDTO.UrlList = _context.UrlList.Where(i => i.UserId == userIdFromUserName).ToList();
+                modelDTO.UrlList = _context.UrlList.Where(i => i.UserId == userId).ToList();
                 foreach (Url url in _context.UrlList)
                 {
                     url.ShortUrl = _configuration["shortenedBegining"] + url.ShortUrl;
@@ -89,7 +83,7 @@ namespace BusinessLayer.Services
                 // use above map to store actual character 
                 // in short url 
                 shorturl += (map[n % 62]);
-                n = n / 62;
+                n /= 62;
             }
             // Reverse shortURL to complete base conversion 
             return new String(shorturl.ToCharArray().Reverse().ToArray()).ToString(); ;

@@ -4,15 +4,17 @@ using ShortenURL.Models;
 using DataAccessLayer.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using ShortenURL.Web.Controllers;
 
 namespace ShortenURL.Controllers
 {
-    public class AccountController : Controller
+    public class AccountController : AppController
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager, IHttpContextAccessor httpContextAccessor) 
+            : base(httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;

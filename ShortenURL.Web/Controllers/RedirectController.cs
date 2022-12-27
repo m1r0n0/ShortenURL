@@ -9,12 +9,12 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace ShortenURL.Web.Controllers
 {
-    public class RedirectController : Controller
+    public class RedirectController : AppController
     {
         private readonly IRedirectService _redirectService;
         private readonly IMapper _mapper;
 
-        public RedirectController(IRedirectService redirectService, IMapper mapper)
+        public RedirectController(IHttpContextAccessor httpContextAccessor, IRedirectService redirectService, IMapper mapper) : base(httpContextAccessor)
         {
             _redirectService = redirectService;
             _mapper = mapper;
