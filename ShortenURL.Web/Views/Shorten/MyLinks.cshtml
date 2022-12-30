@@ -3,6 +3,8 @@
 }
 @model ShortenURL.Models.MyLinksViewModel
 
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
 <h1>My links</h1>
 
 <table class="table">
@@ -26,14 +28,24 @@
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.FullUrl)
-                </td>   
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.ShortUrl)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.IsPrivate)
+                    @Html.CheckBoxFor(modelItem => item.IsPrivate, htmlAttributes: new { @class = "form-check-input" })
+                </td>
+                <td>
+                    @*<a asp-page="./Edit" asp-route-id="@item.Id">Edit</a>*@
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+</br>
+<form method="post">
+    <div class="form-group">
+        <input type="submit" value="Apply changes" onclick="MyLinks()" class="btn btn-primary" />
+    </div>
+</form>

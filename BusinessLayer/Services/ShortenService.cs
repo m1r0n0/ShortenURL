@@ -57,8 +57,9 @@ namespace BusinessLayer.Services
             return modelDTO;
         }
 
-        public LinkViewModelDTO GetURLsForCurrentUser(LinkViewModelDTO modelDTO, string userId)
+        public LinkViewModelDTO GetURLsForCurrentUser(string userId)
         {
+            LinkViewModelDTO modelDTO = new();
             if (_context.UrlList != null)
             {
                 modelDTO.UrlList = _context.UrlList.Where(i => i.UserId == userId).ToList();
@@ -67,6 +68,12 @@ namespace BusinessLayer.Services
                     url.ShortUrl = _configuration["shortenedBegining"] + url.ShortUrl;
                 }
             }
+            return modelDTO;
+        }
+
+        public LinkViewModelDTO ApplyUserUrlChanges(LinkViewModelDTO modelDTO)
+        {
+            _context.SaveChanges();
             return modelDTO;
         }
 

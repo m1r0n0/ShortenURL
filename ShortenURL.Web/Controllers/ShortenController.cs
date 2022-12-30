@@ -39,12 +39,26 @@ namespace ShortenURL.Controllers
 
         [Authorize]
         [HttpGet]
+        public IActionResult MyLinks()
+        {
+            LinkViewModelDTO linkViewModelDTO = null;
+            linkViewModelDTO = _shortenService.GetURLsForCurrentUser(GetUserIdFromClaims());
+            MyLinksViewModel model = _mapper.Map<MyLinksViewModel>(linkViewModelDTO);
+            return View(model);
+        }
+
+        [Authorize]
+        [HttpPost]
         public IActionResult MyLinks(MyLinksViewModel model)
         {
             LinkViewModelDTO linkViewModelDTO = _mapper.Map<LinkViewModelDTO>(model);
-            linkViewModelDTO = _shortenService.GetURLsForCurrentUser(linkViewModelDTO, GetUserIdFromClaims());
+            linkViewModelDTO = _shortenService.ApplyUserUrlChanges(linkViewModelDTO);
             model = _mapper.Map<MyLinksViewModel>(linkViewModelDTO);
-            return View(model);
+
+            // Save changes from model in db
+
+            return Redirect("/Home/Index");
+            //return View(model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
