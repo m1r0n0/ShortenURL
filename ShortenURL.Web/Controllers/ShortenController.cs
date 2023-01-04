@@ -48,17 +48,10 @@ namespace ShortenURL.Controllers
         }
 
         [Authorize]
-        [HttpPost]
-        public IActionResult MyLinks(MyLinksViewModel model)
+        public IActionResult ChangeLinkPrivacy(int id)
         {
-            LinkViewModelDTO linkViewModelDTO = _mapper.Map<LinkViewModelDTO>(model);
-            linkViewModelDTO = _shortenService.ApplyUserUrlChanges(linkViewModelDTO);
-            model = _mapper.Map<MyLinksViewModel>(linkViewModelDTO);
-
-            // Save changes from model in db
-
-            return Redirect("/Home/Index");
-            //return View(model);
+            _shortenService.ChangePrivacy(id);
+            return Redirect("/Shorten/MyLinks");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

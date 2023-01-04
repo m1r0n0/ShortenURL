@@ -71,12 +71,6 @@ namespace BusinessLayer.Services
             return modelDTO;
         }
 
-        public LinkViewModelDTO ApplyUserUrlChanges(LinkViewModelDTO modelDTO)
-        {
-            _context.SaveChanges();
-            return modelDTO;
-        }
-
         public string? IdToShortURL(int n)
         {
             // Map to store 62 possible characters 
@@ -115,6 +109,20 @@ namespace BusinessLayer.Services
                     id = id * 62 + shortURL[i] - '0' + 52;
             }
             return id;
+        }
+
+        public void ChangePrivacy(int id)
+        {
+            var link = _context.UrlList.Where(x => x.Id == id).FirstOrDefault();
+            if (link.IsPrivate)
+            {
+                link.IsPrivate = false;
+            }
+            else
+            {
+                link.IsPrivate = true;
+            }
+            _context.SaveChanges();
         }
     }
 }
