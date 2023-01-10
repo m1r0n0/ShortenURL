@@ -47,11 +47,12 @@ namespace ShortenURL.Controllers
             return View(model);
         }
 
+        [HttpPost]
         [Authorize]
-        public IActionResult ChangeLinkPrivacy(int id)
+        public IActionResult ChangeLinkPrivacy(int id, bool state)
         {
-            _shortenService.ChangePrivacy(id);
-            return Redirect("/Shorten/MyLinks");
+            _shortenService.ChangePrivacy(id, state);
+            return Ok();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -111,10 +111,10 @@ namespace BusinessLayer.Services
             return id;
         }
 
-        public void ChangePrivacy(int id)
+        public void ChangePrivacy(int id, bool state)
         {
             var link = _context.UrlList.Where(x => x.Id == id).FirstOrDefault();
-            if (link.IsPrivate)
+            if (state)
             {
                 link.IsPrivate = false;
             }

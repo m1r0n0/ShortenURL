@@ -33,7 +33,7 @@
                     @Html.DisplayFor(modelItem => item.ShortUrl)
                 </td>
                 <td>
-                    @Html.CheckBoxFor(modelItem => item.IsPrivate , htmlAttributes: new { id = item.Id, @class = "form-check-input toggle", data_url = Url.Action("ChangeLinkPrivacy", "Shorten", new { id = @item.Id }) }) 
+                    @Html.CheckBoxFor(modelItem => item.IsPrivate , htmlAttributes: new { id = item.Id, @class = "form-check-input toggle", data_url = Url.Action("ChangeLinkPrivacy", "Shorten", new { id = @item.Id, state = item.IsPrivate }) }) 
                 </td>
             </tr>
         }
