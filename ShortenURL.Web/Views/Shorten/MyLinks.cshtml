@@ -3,6 +3,8 @@
 }
 @model ShortenURL.Models.MyLinksViewModel
 
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
 <h1>My links</h1>
 
 <table class="table">
@@ -26,14 +28,33 @@
             <tr>
                 <td>
                     @Html.DisplayFor(modelItem => item.FullUrl)
-                </td>   
+                </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.ShortUrl)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.IsPrivate)
+                    @Html.CheckBoxFor(modelItem => item.IsPrivate , htmlAttributes: new { id = item.Id, @class = "form-check-input toggle", data_url = Url.Action("ChangeLinkPrivacy", "Shorten", new { id = @item.Id, state = item.IsPrivate }) }) 
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@section scripts {
+    <script>
+        $(function() {
+            $('.toggle').change(function() {
+                var self = $(this);
+                var url = self.data('url');
+                var id = self.attr('id');
+                var value = self.prop('checked');
+
+                $.ajax({
+                    url: url,
+                    data: { id: id },
+                    type: 'POST',
+                });
+            });
+        });
+    </script>
+}

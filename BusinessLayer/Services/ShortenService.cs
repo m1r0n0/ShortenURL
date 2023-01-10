@@ -57,8 +57,9 @@ namespace BusinessLayer.Services
             return modelDTO;
         }
 
-        public LinkViewModelDTO GetURLsForCurrentUser(LinkViewModelDTO modelDTO, string userId)
+        public LinkViewModelDTO GetURLsForCurrentUser(string userId)
         {
+            LinkViewModelDTO modelDTO = new();
             if (_context.UrlList != null)
             {
                 modelDTO.UrlList = _context.UrlList.Where(i => i.UserId == userId).ToList();
@@ -108,6 +109,20 @@ namespace BusinessLayer.Services
                     id = id * 62 + shortURL[i] - '0' + 52;
             }
             return id;
+        }
+
+        public void ChangePrivacy(int id, bool state)
+        {
+            var link = _context.UrlList.Where(x => x.Id == id).FirstOrDefault();
+            if (state)
+            {
+                link.IsPrivate = false;
+            }
+            else
+            {
+                link.IsPrivate = true;
+            }
+            _context.SaveChanges();
         }
     }
 }
