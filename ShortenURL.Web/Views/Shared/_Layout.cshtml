@@ -7,57 +7,64 @@
     <title>@ViewData["Title"] - ShortenURL.Web</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layout.css">
     <link rel="stylesheet" href="~/ShortenURL.Web.styles.css" asp-append-version="true" />
+    @* <link rel="stylesheet" href="~/ShortenURL.Web/Views/Shared/_Layout.cshtml.css" /> *@
 </head>
 
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+            <div class="container-fluid d-sm-inline-flex flex-nowrap justify-content-between navitems">
+                <div class="d-sm-inline-flex justify-content-between">
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ShortenURL</a>
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ShortenURL</a>
                         <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Shorten"
-                                    asp-action="CreateLink"> Create link</a>
+                            <li class="navi-item">
+                                <a class="navi-link" asp-area="" asp-controller="Shorten" asp-action="CreateLink">
+                                    Create link</a>
                             </li>
-                            <li class="nav-item">
+                            <li class="navi-item">
                                 @if (User.Identity.IsAuthenticated)
                                 {
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Shorten"
-                                    asp-action="MyLinks">My links</a>
+                                    <a class="navi-link" asp-area="" asp-controller="Shorten" asp-action="MyLinks">My
+                                        links</a>
                                 }
-                        </ul>
-                    </div>
-                    <div class="collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item">
-                                @if (User.Identity.IsAuthenticated)
-                                {
-                                    <p class="nav-link">@User.Identity.Name</p>
-                                }
-                                else
-                                {
-                                    <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
-                                }
-                            </li>
-                            <li class="nav-item">
-                                @if (User.Identity.IsAuthenticated)
-                                {
-                                    <form method="post" asp-controller="Account" asp-action="Logout">
-                                        <input class="nav-link" type="submit" value="Logout" />
-                                    </form>
-                                }
-                                else
-                                {
-                                    <a class="nav-link" asp-area="" asp-controller="Account"
-                                    asp-action="Register">Register</a>
-                                }
-                            </li>
                         </ul>
                     </div>
                 </div>
+                <div class="d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1 align-items-end">
+                        <li class="nav-item">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <p class="username">@User.Identity.Name</p>
+                            }
+                            else
+                            {
+                                <a class="navi-link" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+                            }
+                        </li>
+                        <li class="nav-item">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <form method="post" asp-controller="Account" asp-action="Logout">
+                                    <input class="btn-primary" type="submit" value="Logout" />
+                                </form>
+                            }
+                            else
+                            {
+                                <a class="navi-link" asp-area="" asp-controller="Account" asp-action="Register">Register</a>
+                            }
+                        </li>
+                    </ul>
+                </div>
+
             </div>
         </nav>
     </header>
