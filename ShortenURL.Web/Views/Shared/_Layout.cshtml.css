@@ -7,6 +7,27 @@ a.navbar-brand {
   word-break: break-all;
 }
 
+a.navbar-brand:hover {
+  color: #0077cc;
+}
+
+.navi-link {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #0077cc;
+  text-decoration: none;
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out;
+}
+
+a.navi-link:hover {
+  color: #fd0d0d;
+  text-decoration:dotted;
+}
+
+a.navi-item:hover {
+  color: #fd0d0d;
+}
+
 a {
   color: #0077cc;
 }
