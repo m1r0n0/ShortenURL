@@ -47,7 +47,7 @@ namespace ShortenURL.Controllers
             return View(model);
         }
 
-        [HttpPost]
+        [HttpPatch]
         [Authorize]
         public IActionResult ChangeLinkPrivacy(int id, bool state)
         {

@@ -10,6 +10,8 @@ using BusinessLayer.Services;
 using BusinessLayer.Interfaces;
 using ShortenURL.MappingProfiles;
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -23,6 +25,18 @@ builder.Services.AddMvc();
 builder.Services.AddAutoMapper(typeof(AppMappingProfileForCreateLinkVM), typeof(AppMappingProfileForMyLinksVM));
 builder.Services.AddScoped<IShortenService,ShortenService>();
 builder.Services.AddScoped<IRedirectService, RedirectService>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://example.com",
+                                              "http://www.contoso.com",
+                                              "https://localhost:7138",
+                                              "https://localhost:5000")
+                          .AllowAnyMethod();
+                      });
+});
 
 var app = builder.Build();
 
@@ -41,6 +55,8 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseCors(MyAllowSpecificOrigins);
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
@@ -53,7 +69,8 @@ app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllerRoute(
         name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
+        pattern: "{controller=Home}/{action=Index}/{id?}")
+    .RequireCors(MyAllowSpecificOrigins);
 });
 
 app.Run();
